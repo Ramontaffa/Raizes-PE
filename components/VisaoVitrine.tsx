@@ -1,0 +1,125 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Box, Grid, Heading, Text, Button, HStack, Link as ChakraLink } from "@chakra-ui/react";
+import BarraNavegacao from "@/components/BarraNavegacao";
+import FiltroTecnicas from "@/components/FiltroTecnicas";
+import SeletorFiltro from "@/components/SeletorFiltro";
+import GradeProdutos from "@/components/GradeProdutos";
+import { getProdutos, tecnicas, regioes, categorias } from "@/lib/apiFalsa";
+import type { ProdutoComArtesao, Tecnica } from "@/lib/tipos";
+
+const OPCOES_TECNICA = ["Todas", ...tecnicas];
+const TODAS_REGIOES = "Todas as regiões";
+const TODAS_CATEGORIAS = "Todas as categorias";
+const OPCOES_REGIAO = [TODAS_REGIOES, ...regioes];
+const OPCOES_CATEGORIA = [TODAS_CATEGORIAS, ...categorias];
+
+export default function VisaoVitrine() {
+  const parametrosBusca = useSearchParams();
+  const [filtroTecnica, setFiltroTecnica] = useState<string>(parametrosBusca.get("tecnica") ?? "Todas");
+  const [filtroRegiao, setFiltroRegiao] = useState<string>(TODAS_REGIOES);
+  const [filtroCategoria, setFiltroCategoria] = useState<string>(TODAS_CATEGORIAS);
+  const [busca, setBusca] = useState(parametrosBusca.get("q") ?? "");
+  const [produtos, setProdutos] = useState<ProdutoComArtesao[]>([]);
+  const [carregando, setCarregando] = useState(true);
+
+  useEffect(() => {
+    setCarregando(true);
+    const tecnica = filtroTecnica === "Todas" ? undefined : (filtroTecnica as Tecnica);
+    const regiao = filtroRegiao === TODAS_REGIOES ? undefined : filtroRegiao;
+    const categoria = filtroCategoria === TODAS_CATEGORIAS ? undefined : filtroCategoria;
+    // pequeno atraso pra não disparar uma "chamada de API" a cada tecla digitada
+    const temporizador = setTimeout(() => {
+      getProdutos(tecnica, busca, regiao, categoria).then((dados) => {
+        setProdutos(dados);
+        setCarregando(false);
+      });
+    }, 200);
+    return () => clearTimeout(temporizador);
+  }, [filtroTecnica, filtroRegiao, filtroCategoria, busca]);
+
+  const algumFiltroAtivo =
+    filtroTecnica !== "Todas" || filtroRegiao !== TODAS_REGIOES || filtroCategoria !== TODAS_CATEGORIAS;
+
+  function limparFiltros() {
+    setFiltroTecnica("Todas");
+    setFiltroRegiao(TODAS_REGIOES);
+    setFiltroCategoria(TODAS_CATEGORIAS);
+  }
+
+  return (
+    <>
+      <BarraNavegacao valorBusca={busca} aoMudarBusca={setBusca} />
+      <Box maxW="1180px" mx="auto" px={{ base: 5, md: 10 }}>
+        <Grid
+          templateColumns={{ base: "1fr", md: "1.1fr 1fr" }}
+          gap={14}
+          alignItems="center"
+          py={{ base: 10, md: 16 }}
+        >
+          <Box>
+            <Heading fontSize={{ base: "2.2rem", md: "3rem" }} lineHeight={1.08} maxW="11ch">
+              Feito à mão.
+              <br />
+              Direto de quem faz.
+            </Heading>
+            <Text color="mutedFg" fontSize="1.05rem" maxW="40ch" mt={5} mb={7}>
+              Descubra a riqueza do artesanato pernambucano, conecte-se com os mestres e
+              apoie a economia criativa local.
+            </Text>
+            <Button variant="solid" size="lg">
+              Explorar peças
+            </Button>
+          </Box>
+          <Box
+            sx={{ aspectRatio: "4 / 3.4" }}
+            borderRadius="10px"
+            backgroundImage="radial-gradient(circle at 30% 25%, rgba(255,255,255,.35), transparent 45%), linear-gradient(135deg, #d9b48f 0%, #b75c40 65%, #8a4530 100%)"
+          />
+        </Grid>
+
+        <Box borderBottom="1px solid" borderColor="border" pb={7} mb={9}>
+          <FiltroTecnicas opcoes={OPCOES_TECNICA} valor={filtroTecnica} aoMudar={setFiltroTecnica} />
+
+          <HStack spacing={4} mt={4} flexWrap="wrap" align="flex-end">
+            <SeletorFiltro rotulo="Região" opcoes={OPCOES_REGIAO} valor={filtroRegiao} aoMudar={setFiltroRegiao} />
+            <SeletorFiltro
+              rotulo="Categoria"
+              opcoes={OPCOES_CATEGORIA}
+              valor={filtroCategoria}
+              aoMudar={setFiltroCategoria}
+            />
+            {algumFiltroAtivo && (
+              <ChakraLink fontSize="0.82rem" color="primary" onClick={limparFiltros} cursor="pointer" mb={2}>
+                Limpar filtros
+              </ChakraLink>
+            )}
+          </HStack>
+        </Box>
+
+        {busca && (
+          <Text fontSize="0.9rem" color="mutedFg" mt={-6} mb={8}>
+            Resultados para &quot;{busca}&quot; —{" "}
+            <ChakraLink color="primary" onClick={() => setBusca("")} cursor="pointer">
+              limpar busca
+            </ChakraLink>
+          </Text>
+        )}
+
+        <Box pb={16}>
+          <GradeProdutos
+            produtos={produtos}
+            carregando={carregando}
+            mensagemVazia={
+              busca
+                ? `Nenhuma peça encontrada para "${busca}". Tente outra técnica, região, categoria ou termo de busca.`
+                : "Nenhuma peça encontrada para esse filtro."
+            }
+          />
+        </Box>
+      </Box>
+    </>
+  );
+}
