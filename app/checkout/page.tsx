@@ -104,6 +104,14 @@ export default function Pagina() {
     setEtapa((atual) => Math.max(0, atual - 1));
   }
 
+  // Cada etapa é um <form>, então dar Enter em qualquer campo avança — é o reflexo de
+  // quem preenche formulário, e esperar que só o clique funcione trava o usuário.
+  function aoEnviar(evento: React.FormEvent) {
+    evento.preventDefault();
+    if (etapa < 2) avancar();
+    else confirmarPedido();
+  }
+
   // Compra simulada: nenhum pagamento é processado. Guardamos um resumo antes de limpar
   // o carrinho, senão a tela de sucesso não teria o que mostrar.
   function confirmarPedido() {
@@ -204,7 +212,7 @@ export default function Pagina() {
           Finalizar compra
         </Heading>
 
-        <Stepper index={etapa} size="sm" colorScheme="orange" mb={10}>
+        <Stepper index={etapa} size="sm" colorScheme="terracota" mb={10}>
           {ETAPAS.map((passo) => (
             <Step key={passo.titulo}>
               <StepIndicator>
@@ -226,128 +234,133 @@ export default function Pagina() {
           {ETAPAS[etapa].instrucao}
         </Text>
 
-        <Box bg="card" border="1px solid" borderColor="border" borderRadius="12px" p={{ base: 5, md: 7 }}>
-          {etapa === 0 && (
-            <VStack spacing={5} align="stretch">
-              {campoDeTexto("nome", "Ex: Maria da Silva")}
-              {campoDeTexto("telefone", "Ex: (81) 99999-0000")}
-            </VStack>
-          )}
+        {/* noValidate: a validação por etapa é a nossa, com mensagens em FormErrorMessage.
+            Sem isso o navegador bloqueia o submit antes e mostra o balão dele. */}
+        <Box as="form" onSubmit={aoEnviar} noValidate>
+          <Box bg="card" border="1px solid" borderColor="border" borderRadius="12px" p={{ base: 5, md: 7 }}>
+            {etapa === 0 && (
+              <VStack spacing={5} align="stretch">
+                {campoDeTexto("nome", "Ex: Maria da Silva")}
+                {campoDeTexto("telefone", "Ex: (81) 99999-0000")}
+              </VStack>
+            )}
 
-          {etapa === 1 && (
-            <VStack spacing={5} align="stretch">
-              <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={5}>
-                {campoDeTexto("cep", "Ex: 50000-000")}
-                {campoDeTexto("bairro")}
-              </SimpleGrid>
-              <SimpleGrid columns={{ base: 1, sm: 3 }} spacing={5}>
-                <Box gridColumn={{ sm: "span 2" }}>{campoDeTexto("rua")}</Box>
-                {campoDeTexto("numero")}
-              </SimpleGrid>
-              <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={5}>
-                {campoDeTexto("cidade")}
-                <FormControl isInvalid={errosVisiveis && dados.uf === ""} isRequired>
-                  <FormLabel fontSize="0.9rem">{ROTULOS.uf}</FormLabel>
-                  <Select
-                    size="lg"
-                    bg="card"
-                    borderColor="border"
-                    placeholder="Escolha o estado"
-                    value={dados.uf}
-                    onChange={(e) => preencher("uf", e.target.value)}
-                  >
-                    {ESTADOS.map((sigla) => (
-                      <option key={sigla} value={sigla}>
-                        {sigla}
-                      </option>
-                    ))}
-                  </Select>
-                  <FormErrorMessage>Escolha o estado.</FormErrorMessage>
-                </FormControl>
-              </SimpleGrid>
-            </VStack>
-          )}
+            {etapa === 1 && (
+              <VStack spacing={5} align="stretch">
+                <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={5}>
+                  {campoDeTexto("cep", "Ex: 50000-000")}
+                  {campoDeTexto("bairro")}
+                </SimpleGrid>
+                <SimpleGrid columns={{ base: 1, sm: 3 }} spacing={5}>
+                  <Box gridColumn={{ sm: "span 2" }}>{campoDeTexto("rua")}</Box>
+                  {campoDeTexto("numero")}
+                </SimpleGrid>
+                <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={5}>
+                  {campoDeTexto("cidade")}
+                  <FormControl isInvalid={errosVisiveis && dados.uf === ""} isRequired>
+                    <FormLabel fontSize="0.9rem">{ROTULOS.uf}</FormLabel>
+                    <Select
+                      size="lg"
+                      bg="card"
+                      borderColor="border"
+                      placeholder="Escolha o estado"
+                      value={dados.uf}
+                      onChange={(e) => preencher("uf", e.target.value)}
+                    >
+                      {ESTADOS.map((sigla) => (
+                        <option key={sigla} value={sigla}>
+                          {sigla}
+                        </option>
+                      ))}
+                    </Select>
+                    <FormErrorMessage>Escolha o estado.</FormErrorMessage>
+                  </FormControl>
+                </SimpleGrid>
+              </VStack>
+            )}
 
-          {etapa === 2 && (
-            <VStack spacing={5} align="stretch">
-              <Box>
-                <Text fontSize="0.85rem" color="mutedFg" mb={2}>
-                  Entregar para
-                </Text>
-                <Text fontWeight={500}>{dados.nome}</Text>
-                <Text color="mutedFg" fontSize="0.9rem">
-                  {dados.telefone}
-                </Text>
-                <Text color="mutedFg" fontSize="0.9rem">
-                  {dados.rua}, {dados.numero} — {dados.bairro}, {dados.cidade}/{dados.uf}, CEP{" "}
-                  {dados.cep}
-                </Text>
-              </Box>
+            {etapa === 2 && (
+              <VStack spacing={5} align="stretch">
+                <Box>
+                  <Text fontSize="0.85rem" color="mutedFg" mb={2}>
+                    Entregar para
+                  </Text>
+                  <Text fontWeight={500}>{dados.nome}</Text>
+                  <Text color="mutedFg" fontSize="0.9rem">
+                    {dados.telefone}
+                  </Text>
+                  <Text color="mutedFg" fontSize="0.9rem">
+                    {dados.rua}, {dados.numero} — {dados.bairro}, {dados.cidade}/{dados.uf}, CEP{" "}
+                    {dados.cep}
+                  </Text>
+                </Box>
 
-              <Divider borderColor="border" />
+                <Divider borderColor="border" />
 
-              <Box>
-                <Text fontSize="0.85rem" color="mutedFg" mb={3}>
-                  Peças do pedido
-                </Text>
-                <VStack spacing={3} align="stretch">
-                  {itens.map((item) => (
-                    <Flex key={item.id} justify="space-between" gap={4}>
-                      <Box>
-                        <Text fontSize="0.95rem">{item.produto.nome}</Text>
-                        <Text fontSize="0.8rem" color="mutedFg">
-                          {item.quantidade} × R$ {item.produto.preco.toFixed(2).replace(".", ",")} ·
-                          por {item.produto.artesaoNome}
+                <Box>
+                  <Text fontSize="0.85rem" color="mutedFg" mb={3}>
+                    Peças do pedido
+                  </Text>
+                  <VStack spacing={3} align="stretch">
+                    {itens.map((item) => (
+                      <Flex key={item.id} justify="space-between" gap={4}>
+                        <Box>
+                          <Text fontSize="0.95rem">{item.produto.nome}</Text>
+                          <Text fontSize="0.8rem" color="mutedFg">
+                            {item.quantidade} × R$ {item.produto.preco.toFixed(2).replace(".", ",")} ·
+                            por {item.produto.artesaoNome}
+                          </Text>
+                        </Box>
+                        <Text fontWeight={600} whiteSpace="nowrap">
+                          R$ {(item.produto.preco * item.quantidade).toFixed(2).replace(".", ",")}
                         </Text>
-                      </Box>
-                      <Text fontWeight={600} whiteSpace="nowrap">
-                        R$ {(item.produto.preco * item.quantidade).toFixed(2).replace(".", ",")}
-                      </Text>
-                    </Flex>
-                  ))}
-                </VStack>
-              </Box>
+                      </Flex>
+                    ))}
+                  </VStack>
+                </Box>
 
-              <Divider borderColor="border" />
+                <Divider borderColor="border" />
 
-              <Flex justify="space-between" align="baseline">
-                <Text color="mutedFg">Total</Text>
-                <Text fontSize="1.35rem" fontWeight={600}>
-                  R$ {valorTotal.toFixed(2).replace(".", ",")}
-                </Text>
-              </Flex>
+                <Flex justify="space-between" align="baseline">
+                  <Text color="mutedFg">Total</Text>
+                  <Text fontSize="1.35rem" fontWeight={600}>
+                    R$ {valorTotal.toFixed(2).replace(".", ",")}
+                  </Text>
+                </Flex>
 
-              <Box bg="muted" borderRadius="10px" p={4}>
-                <Text fontSize="0.85rem" color="mutedFg">
-                  Compra simulada: nada será cobrado agora. O artesão entra em contato pelo WhatsApp
-                  para combinar pagamento e entrega.
-                </Text>
-              </Box>
-            </VStack>
-          )}
+                <Box bg="muted" borderRadius="10px" p={4}>
+                  <Text fontSize="0.85rem" color="mutedFg">
+                    Compra simulada: nada será cobrado agora. O artesão entra em contato pelo WhatsApp
+                    para combinar pagamento e entrega.
+                  </Text>
+                </Box>
+              </VStack>
+            )}
+          </Box>
+
+          <HStack justify="space-between" mt={7}>
+            {etapa === 0 ? (
+              <Button as={NextLink} href="/" leftIcon={<FiArrowLeft />} variant="ghost" color="mutedFg">
+                Voltar à vitrine
+              </Button>
+            ) : (
+              // type="button" para o "Voltar" não disparar o submit do formulário
+              <Button
+                type="button"
+                leftIcon={<FiArrowLeft />}
+                variant="ghost"
+                color="mutedFg"
+                onClick={voltar}
+              >
+                Voltar
+              </Button>
+            )}
+
+            <Button type="submit" variant="solid" size="lg">
+              {etapa < 2 ? "Continuar" : "Confirmar pedido"}
+            </Button>
+          </HStack>
         </Box>
-
-        <HStack justify="space-between" mt={7}>
-          {etapa === 0 ? (
-            <Button as={NextLink} href="/" leftIcon={<FiArrowLeft />} variant="ghost" color="mutedFg">
-              Voltar à vitrine
-            </Button>
-          ) : (
-            <Button leftIcon={<FiArrowLeft />} variant="ghost" color="mutedFg" onClick={voltar}>
-              Voltar
-            </Button>
-          )}
-
-          {etapa < 2 ? (
-            <Button variant="solid" size="lg" onClick={avancar}>
-              Continuar
-            </Button>
-          ) : (
-            <Button variant="solid" size="lg" onClick={confirmarPedido}>
-              Confirmar pedido
-            </Button>
-          )}
-        </HStack>
       </Box>
     </>
   );
