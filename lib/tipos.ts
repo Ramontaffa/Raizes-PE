@@ -96,6 +96,26 @@ export interface PerfilArtesao {
   produtos: ProdutoComArtesao[];
 }
 
+// Item do carrinho já resolvido com o produto, para a UI não precisar buscar cada
+// produto por id ao renderizar a lista ou somar o total. Enquanto não existe backend,
+// `id` é gerado no cliente e `carrinhoId` usa um valor local fixo.
+export interface ItemCarrinhoComProduto extends ItemCarrinho {
+  produto: ProdutoComArtesao;
+}
+
+// Dados coletados no checkout simulado. Ainda não têm tabela no Modelo Lógico:
+// quando o pedido passar a ser persistido, isto vira o endereço de entrega do Pedido.
+export interface DadosEntrega {
+  nome: string;
+  telefone: string;
+  cep: string;
+  rua: string;
+  numero: string;
+  bairro: string;
+  cidade: string;
+  uf: string;
+}
+
 export interface EstatisticasPainel {
   vendasDoMes: number;
   vendasDeltaPct: number;

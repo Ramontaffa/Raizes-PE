@@ -31,7 +31,7 @@ O projeto foi construído utilizando um ecossistema moderno focado em alta perfo
   - Gestão de fluxo de aprovação e bloqueio de artesãos.
   - Edição de Categorias e Técnicas de arte.
 
-> **Aviso:** Como se trata de um MVP voltado para validação de frontend, *não há integração com banco de dados real nem serviços de autenticação externa neste estágio.* Toda a aplicação consome dados *Mockados* localizados em `src/mock/`.
+> **Aviso:** Como se trata de um MVP voltado para validação de frontend, *não há integração com banco de dados real nem serviços de autenticação externa neste estágio.* Toda a aplicação consome dados *Mockados* de `lib/dadosFalsos.ts`, servidos por `lib/apiFalsa.ts`.
 
 ## 🎨 Foco em Inclusão Digital (UX)
 
@@ -73,25 +73,32 @@ O aplicativo estará disponível em seu navegador acessando: [http://localhost:3
 ## 📁 Estrutura de Pastas
 
 ```text
-├── public/                 # Imagens estáticas e favicons
-├── src/
-│   ├── app/                # Roteamento baseado no Next.js App Router
-│   │   ├── (public)/       # Agrupamento da vitrine principal
-│   │   ├── admin/          # Rotas restritas do painel administrativo
-│   │   └── painel-artesao/ # Rotas do portal do produtor
-│   ├── components/         # Módulos reutilizáveis
-│   │   ├── layout/         # Header, Footer, Sidebars
-│   │   ├── product/        # Cards e sessões relacionadas a produto
-│   │   └── ui/             # Botões customizados, badges e elementos menores
-│   ├── mock/               # Dados estáticos para testes visuais (JSON-like)
-│   ├── theme/              # Definições do Design System no Chakra UI
-│   └── types/              # Interfaces TypeScript da aplicação
-└── package.json            # Scripts e dependências
+├── app/                      # Roteamento do Next.js App Router
+│   ├── page.tsx              # Vitrine pública
+│   ├── produto/[id]/         # Detalhe do produto
+│   ├── artesao/[id]/         # Perfil público do artesão
+│   ├── checkout/             # Wizard de finalização de compra
+│   ├── painel/               # Painel do artesão
+│   ├── provedores.tsx        # Providers (Chakra UI e carrinho)
+│   └── layout.tsx            # Layout raiz
+├── components/               # Componentes reutilizáveis
+├── lib/
+│   ├── tipos.ts              # Interfaces TypeScript (espelham o Modelo Lógico)
+│   ├── dadosFalsos.ts        # Dados mockados
+│   ├── apiFalsa.ts           # Funções que simulam chamadas de API
+│   ├── contextoCarrinho.tsx  # Estado do carrinho (Context API)
+│   ├── tema.ts               # Design System no Chakra UI
+│   └── arteProduto.ts        # Padrões visuais no lugar das fotos
+└── package.json              # Scripts e dependências
 ```
+
+> Não existe pasta `src/`: o código fica na raiz, e o alias `@/` aponta para ela
+> (`@/lib/tipos`, `@/components/CartaoProduto`).
 
 ## ✒️ Autoria
 
-- Bruno Sottomayor Martin
-- Igor Kauã de Souza Siqueira
 - Bruno José Cavalcanti Duarte Filho
+- Bruno Sottomayor Martin
 - Caio Gilles Costa Medeiros de Souza
+- Gustavo Rafael Renaux Veloso
+- Igor Kauã de Souza Siqueira

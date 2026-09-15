@@ -11,6 +11,23 @@ const tema = extendTheme({
     heading: `'Fraunces', serif`,
     body: `'Work Sans', sans-serif`,
   },
+  // Escala derivada do primary (#b75c40) para os componentes do Chakra que pedem
+  // colorScheme (Stepper, Alert, Badge, Checkbox, Switch...). Sem ela, esses componentes
+  // caem no laranja genérico da biblioteca, fora da identidade do projeto.
+  colors: {
+    terracota: {
+      50: "#f9f2f0",
+      100: "#f3e5e0",
+      200: "#e8cbc2",
+      300: "#daaa9c",
+      400: "#c8836e",
+      500: "#b75c40",
+      600: "#a15239",
+      700: "#854430",
+      800: "#653626",
+      900: "#49281d",
+    },
+  },
   semanticTokens: {
     colors: {
       bg: { default: "#fdfbf7", _dark: "#2a2421" },

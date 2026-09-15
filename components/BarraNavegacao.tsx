@@ -15,6 +15,7 @@ import {
 import NextLink from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { FiSearch, FiSun, FiMoon, FiShoppingBag } from "react-icons/fi";
+import { useCarrinho } from "@/lib/contextoCarrinho";
 
 interface PropsBarraNavegacao {
   valorBusca?: string;
@@ -25,6 +26,7 @@ export default function BarraNavegacao({ valorBusca, aoMudarBusca }: PropsBarraN
   const caminho = usePathname();
   const roteador = useRouter();
   const { colorMode, toggleColorMode } = useColorMode();
+  const { quantidadeTotal, abrirGaveta } = useCarrinho();
 
   const naVitrine = caminho === "/";
   const noPainel = caminho === "/painel";
@@ -127,20 +129,32 @@ export default function BarraNavegacao({ valorBusca, aoMudarBusca }: PropsBarraN
             onClick={toggleColorMode}
           />
           <Box position="relative">
-            <IconButton aria-label="Carrinho" icon={<FiShoppingBag />} variant="ghost" />
-            <Box
-              position="absolute"
-              top="-2px"
-              right="-2px"
-              bg="primary"
-              color="primaryFg"
-              fontSize="0.6rem"
-              px="5px"
-              borderRadius="full"
-              fontWeight={600}
-            >
-              2
-            </Box>
+            <IconButton
+              aria-label={
+                quantidadeTotal > 0
+                  ? `Meu carrinho, ${quantidadeTotal} ${quantidadeTotal === 1 ? "peça" : "peças"}`
+                  : "Meu carrinho, vazio"
+              }
+              icon={<FiShoppingBag />}
+              variant="ghost"
+              onClick={abrirGaveta}
+            />
+            {quantidadeTotal > 0 && (
+              <Box
+                position="absolute"
+                top="-2px"
+                right="-2px"
+                bg="primary"
+                color="primaryFg"
+                fontSize="0.6rem"
+                px="5px"
+                borderRadius="full"
+                fontWeight={600}
+                pointerEvents="none"
+              >
+                {quantidadeTotal}
+              </Box>
+            )}
           </Box>
         </HStack>
       </HStack>

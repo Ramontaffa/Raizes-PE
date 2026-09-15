@@ -1,20 +1,8 @@
 import { Box, Text, Badge, HStack, Link as ChakraLink } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { FiMapPin } from "react-icons/fi";
+import { ARTE_POR_TECNICA, PADRAO_RENDA } from "@/lib/arteProduto";
 import type { ProdutoComArtesao } from "@/lib/tipos";
-
-const ARTE_POR_TECNICA: Record<string, string> = {
-  Cerâmica:
-    "radial-gradient(circle at 70% 20%, rgba(255,255,255,.4), transparent 50%), linear-gradient(160deg, #e4c9a6, #b75c40 80%)",
-  Têxtil:
-    "repeating-linear-gradient(115deg, #e8dbce 0px, #e8dbce 10px, #d8c3ae 10px, #d8c3ae 20px)",
-  Madeira:
-    "repeating-linear-gradient(180deg, #7a4a30 0px, #7a4a30 4px, #6b3f28 4px, #6b3f28 8px)",
-  Palha:
-    "repeating-linear-gradient(90deg, #e3c98a 0px, #e3c98a 8px, #cdae6b 8px, #cdae6b 16px)",
-};
-
-const PADRAO_RENDA = "radial-gradient(circle, rgba(74,59,50,.28) 1.6px, transparent 1.7px)";
 
 export default function CartaoProduto({
   produto,
