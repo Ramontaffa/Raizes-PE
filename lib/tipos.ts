@@ -116,6 +116,29 @@ export interface DadosEntrega {
   uf: string;
 }
 
+// Pedido já resolvido com seus itens e o nome do comprador, para o painel do artesão e o
+// histórico do comprador não precisarem cruzar itensPedido/produtos/usuarios na tela.
+export interface ItemPedidoComProduto extends ItemPedido {
+  produtoNome: string;
+  produtoTecnica: Tecnica;
+}
+
+export interface PedidoComItens extends Pedido {
+  compradorNome: string;
+  itens: ItemPedidoComProduto[];
+}
+
+// Aviso mostrado ao comprador quando o artesão marca o pedido como enviado.
+// Sem backend de notificações, vive no mesmo estado local dos pedidos.
+export interface NotificacaoEnvio {
+  id: string;
+  pedidoId: string;
+  compradorId: string;
+  mensagem: string;
+  data: string;
+  lida: boolean;
+}
+
 export interface EstatisticasPainel {
   vendasDoMes: number;
   vendasDeltaPct: number;

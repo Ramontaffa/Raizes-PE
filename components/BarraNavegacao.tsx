@@ -30,6 +30,7 @@ export default function BarraNavegacao({ valorBusca, aoMudarBusca }: PropsBarraN
 
   const naVitrine = caminho === "/";
   const noPainel = caminho === "/painel";
+  const nosPedidos = caminho === "/meus-pedidos";
   const controlado = valorBusca !== undefined && aoMudarBusca !== undefined;
 
   const [termoLocal, setTermoLocal] = useState("");
@@ -67,8 +68,9 @@ export default function BarraNavegacao({ valorBusca, aoMudarBusca }: PropsBarraN
     </Box>
   );
 
+  // Com três links, spacing fixo estourava a linha em telas estreitas.
   const linksDeNavegacao = (
-    <HStack spacing={6} fontSize="sm" flexShrink={0}>
+    <HStack spacing={{ base: 4, lg: 6 }} fontSize="sm" flexShrink={0} flexWrap="wrap">
       <ChakraLink
         as={NextLink}
         href="/"
@@ -83,6 +85,19 @@ export default function BarraNavegacao({ valorBusca, aoMudarBusca }: PropsBarraN
       </ChakraLink>
       <ChakraLink
         as={NextLink}
+        href="/meus-pedidos"
+        color={nosPedidos ? "fg" : "mutedFg"}
+        borderBottom="2px solid"
+        borderColor={nosPedidos ? "primary" : "transparent"}
+        pb={1}
+        fontWeight={nosPedidos ? 500 : 400}
+        _hover={{ textDecoration: "none" }}
+        whiteSpace="nowrap"
+      >
+        Meus Pedidos
+      </ChakraLink>
+      <ChakraLink
+        as={NextLink}
         href="/painel"
         color={noPainel ? "fg" : "mutedFg"}
         borderBottom="2px solid"
@@ -90,6 +105,7 @@ export default function BarraNavegacao({ valorBusca, aoMudarBusca }: PropsBarraN
         pb={1}
         fontWeight={noPainel ? 500 : 400}
         _hover={{ textDecoration: "none" }}
+        whiteSpace="nowrap"
       >
         Painel do Artesão
       </ChakraLink>

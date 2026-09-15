@@ -29,6 +29,7 @@ import {
 import { FiArrowLeft, FiCheck } from "react-icons/fi";
 import BarraNavegacao from "@/components/BarraNavegacao";
 import { useCarrinho } from "@/lib/contextoCarrinho";
+import { usePedidos, ID_COMPRADOR_DEMO } from "@/lib/contextoPedidos";
 import type { DadosEntrega } from "@/lib/tipos";
 
 // Wizard curto de propósito: uma pergunta por vez, como decidido no foco de inclusão
@@ -76,6 +77,7 @@ interface PedidoConfirmado {
 
 export default function Pagina() {
   const { itens, valorTotal, quantidadeTotal, limparCarrinho } = useCarrinho();
+  const { criarPedido } = usePedidos();
   const [etapa, setEtapa] = useState(0);
   const [dados, setDados] = useState<DadosEntrega>(DADOS_VAZIOS);
   const [errosVisiveis, setErrosVisiveis] = useState(false);
@@ -112,12 +114,14 @@ export default function Pagina() {
     else confirmarPedido();
   }
 
-  // Compra simulada: nenhum pagamento é processado. Guardamos um resumo antes de limpar
-  // o carrinho, senão a tela de sucesso não teria o que mostrar.
+  // Compra simulada: nenhum pagamento é processado. Mas o pedido passa a existir no
+  // histórico do comprador, senão o número mostrado aqui não levaria a lugar nenhum.
+  // Guardamos um resumo antes de limpar o carrinho, que é a fonte dos itens.
   function confirmarPedido() {
+    const novoPedido = criarPedido(ID_COMPRADOR_DEMO, itens);
     setPedido({
-      numero: `PED-${Date.now().toString().slice(-6)}`,
-      total: valorTotal,
+      numero: novoPedido.id,
+      total: novoPedido.valorTotal,
       quantidadeDePecas: quantidadeTotal,
     });
     limparCarrinho();
@@ -177,9 +181,14 @@ export default function Pagina() {
             </Text>
           </Box>
 
-          <Button as={NextLink} href="/" variant="solid" size="lg">
-            Voltar à vitrine
-          </Button>
+          <HStack spacing={3} justify="center">
+            <Button as={NextLink} href="/meus-pedidos" variant="solid" size="lg">
+              Ver meus pedidos
+            </Button>
+            <Button as={NextLink} href="/" variant="outline" size="lg">
+              Voltar à vitrine
+            </Button>
+          </HStack>
         </Box>
       </>
     );
