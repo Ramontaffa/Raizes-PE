@@ -22,22 +22,13 @@ import {
   getProdutosRelacionados,
   getResumoAvaliacoes,
 } from "@/lib/apiFalsa";
+import { ARTE_POR_TECNICA, PADRAO_RENDA } from "@/lib/arteProduto";
+import { useCarrinho } from "@/lib/contextoCarrinho";
 import type { ProdutoComArtesao, ResumoAvaliacoes } from "@/lib/tipos";
-
-const ARTE_POR_TECNICA: Record<string, string> = {
-  Cerâmica:
-    "radial-gradient(circle at 70% 20%, rgba(255,255,255,.4), transparent 50%), linear-gradient(160deg, #e4c9a6, #b75c40 80%)",
-  Têxtil:
-    "repeating-linear-gradient(115deg, #e8dbce 0px, #e8dbce 10px, #d8c3ae 10px, #d8c3ae 20px)",
-  Madeira:
-    "repeating-linear-gradient(180deg, #7a4a30 0px, #7a4a30 4px, #6b3f28 4px, #6b3f28 8px)",
-  Palha:
-    "repeating-linear-gradient(90deg, #e3c98a 0px, #e3c98a 8px, #cdae6b 8px, #cdae6b 16px)",
-};
-const PADRAO_RENDA = "radial-gradient(circle, rgba(74,59,50,.28) 1.6px, transparent 1.7px)";
 
 export default function Pagina() {
   const parametros = useParams<{ id: string }>();
+  const { adicionarItem, abrirGaveta } = useCarrinho();
   const [produto, setProduto] = useState<ProdutoComArtesao | null | undefined>(undefined);
   const [relacionados, setRelacionados] = useState<ProdutoComArtesao[]>([]);
   const [resumoAvaliacoes, setResumoAvaliacoes] = useState<ResumoAvaliacoes | null>(null);
@@ -90,6 +81,7 @@ export default function Pagina() {
   }
 
   const ehRenda = produto.tecnica === "Renda e Bordado";
+  const semEstoque = produto.estoqueQtd <= 0;
 
   return (
     <>
@@ -151,9 +143,25 @@ export default function Pagina() {
               {produto.descricao}
             </Text>
 
-            <Button variant="solid" size="lg" mb={8}>
-              Adicionar ao carrinho
+            {/* Abrir a gaveta logo em seguida deixa visível que a peça entrou no carrinho */}
+            <Button
+              variant="solid"
+              size="lg"
+              mb={2}
+              isDisabled={semEstoque}
+              onClick={() => {
+                adicionarItem(produto);
+                abrirGaveta();
+              }}
+            >
+              {semEstoque ? "Peça esgotada" : "Adicionar ao carrinho"}
             </Button>
+
+            <Text fontSize="0.82rem" color="mutedFg" mb={8}>
+              {semEstoque
+                ? "Esta peça acabou. Fale com o artesão para saber de uma nova produção."
+                : `${produto.estoqueQtd} ${produto.estoqueQtd === 1 ? "peça disponível" : "peças disponíveis"}`}
+            </Text>
 
             <Box bg="card" border="1px solid" borderColor="border" borderRadius="10px" p={5}>
               <Text fontSize="0.8rem" color="mutedFg" mb={1}>
