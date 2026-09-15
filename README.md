@@ -102,3 +102,5 @@ O aplicativo estará disponível em seu navegador acessando: [http://localhost:3
 - Caio Gilles Costa Medeiros de Souza
 - Gustavo Rafael Renaux Veloso
 - Igor Kauã de Souza Siqueira
+- Matheus Conolly
+- Leonardo Felipe Demétrio
