@@ -104,3 +104,4 @@ O aplicativo estará disponível em seu navegador acessando: [http://localhost:3
 - Igor Kauã de Souza Siqueira
 - Matheus Conolly
 - Leonardo Felipe Demétrio
+- Hilton Resende Montes Neto
