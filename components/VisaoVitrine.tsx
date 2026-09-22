@@ -7,6 +7,7 @@ import BarraNavegacao from "@/components/BarraNavegacao";
 import FiltroTecnicas from "@/components/FiltroTecnicas";
 import SeletorFiltro from "@/components/SeletorFiltro";
 import GradeProdutos from "@/components/GradeProdutos";
+import SecaoRecomendados from "@/components/SecaoRecomendados";
 import { getProdutos, tecnicas, regioes, categorias } from "@/lib/apiFalsa";
 import type { ProdutoComArtesao, Tecnica } from "@/lib/tipos";
 
@@ -98,6 +99,8 @@ export default function VisaoVitrine() {
             )}
           </HStack>
         </Box>
+
+        {!busca && !algumFiltroAtivo && <SecaoRecomendados />}
 
         {busca && (
           <Text fontSize="0.9rem" color="mutedFg" mt={-6} mb={8}>
