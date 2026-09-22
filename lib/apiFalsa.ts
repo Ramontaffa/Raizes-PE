@@ -145,12 +145,29 @@ export async function getEstatisticasPainel(usuarioId: string): Promise<Estatist
   const vendasDoMes = itensDoArtesao.reduce((soma, i) => soma + i.quantidade * i.precoUnitario, 0);
   const pedidosPendentes = pedidosDoArtesao.filter((p) => p.status === "pendente").length;
 
+  const historicoMensal = [
+    { mes: "Fev", faturamento: 1120, pedidos: 4 },
+    { mes: "Mar", faturamento: 1450, pedidos: 5 },
+    { mes: "Abr", faturamento: 1380, pedidos: 4 },
+    { mes: "Mai", faturamento: 1890, pedidos: 7 },
+    { mes: "Jun", faturamento: 2150, pedidos: 8 },
+    { mes: "Jul", faturamento: 2580, pedidos: 10 },
+  ];
+
+  const vendasPorTecnica = [
+    { tecnica: "Têxtil", totalVendido: 1720, porcentagem: 67 },
+    { tecnica: "Renda e Bordado", totalVendido: 540, porcentagem: 21 },
+    { tecnica: "Palha", totalVendido: 320, porcentagem: 12 },
+  ];
+
   return atraso({
     vendasDoMes,
     vendasDeltaPct: 12,
     pedidosPendentes,
     visitasNoPerfil: 128,
     visitasDeltaPct: 5,
+    historicoMensal,
+    vendasPorTecnica,
   });
 }
 

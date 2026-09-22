@@ -139,10 +139,24 @@ export interface NotificacaoEnvio {
   lida: boolean;
 }
 
+export interface PontoSerieVendas {
+  mes: string;
+  faturamento: number;
+  pedidos: number;
+}
+
+export interface DistribuicaoTecnica {
+  tecnica: string;
+  totalVendido: number;
+  porcentagem: number;
+}
+
 export interface EstatisticasPainel {
   vendasDoMes: number;
   vendasDeltaPct: number;
   pedidosPendentes: number;
   visitasNoPerfil: number;
   visitasDeltaPct: number;
+  historicoMensal: PontoSerieVendas[];
+  vendasPorTecnica: DistribuicaoTecnica[];
 }

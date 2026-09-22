@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Flex, Box, Heading, Text, Button, SimpleGrid, useToast } from "@chakra-ui/react";
 import BarraNavegacao from "@/components/BarraNavegacao";
 import CartaoEstatistica from "@/components/CartaoEstatistica";
+import GraficoVendas from "@/components/GraficoVendas";
 import LinhaProduto from "@/components/LinhaProduto";
 import LinhaPedido from "@/components/LinhaPedido";
 import { getProdutosDoArtesao, getEstatisticasPainel } from "@/lib/apiFalsa";
@@ -84,6 +85,13 @@ export default function Pagina() {
             </>
           )}
         </SimpleGrid>
+
+        {estatisticas && (
+          <GraficoVendas
+            historicoMensal={estatisticas.historicoMensal}
+            vendasPorTecnica={estatisticas.vendasPorTecnica}
+          />
+        )}
 
         <Box
           bg="card"
