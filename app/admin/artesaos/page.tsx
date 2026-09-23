@@ -1,11 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import { Badge, Box, Button, Flex, Heading, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
+import NextLink from "next/link";
 import { artesaos, usuarios } from "@/lib/dadosFalsos";
 import { useProdutos } from "@/lib/contextoProdutos";
 
 export default function GestaoArtesaosPage() {
   const { produtosDoArtesao } = useProdutos();
+  const [aprovado, setAprovado] = useState(false);
 
   return (
     <Box>
@@ -33,7 +36,7 @@ export default function GestaoArtesaosPage() {
               );
               // Ainda não existe status de aprovação no modelo: o primeiro aparece como
               // pendente só para demonstrar o fluxo (igual à versão da branch mvp).
-              const pendente = indice === 0;
+              const pendente = indice === 0 && !aprovado;
 
               return (
                 <Tr key={artesao.id}>
@@ -61,11 +64,11 @@ export default function GestaoArtesaosPage() {
                   </Td>
                   <Td>
                     <Flex gap={2}>
-                      <Button size="sm" variant="outline">
+                      <Button as={NextLink} href={`/artesao/${artesao.id}`} size="sm" variant="outline">
                         Ver Perfil
                       </Button>
                       {pendente && (
-                        <Button size="sm" variant="solid">
+                        <Button size="sm" variant="solid" onClick={() => setAprovado(true)}>
                           Aprovar
                         </Button>
                       )}
