@@ -27,7 +27,7 @@ interface ValorContextoProdutos {
   produtosLocais: Produto[];
   produtosDoArtesao: (usuarioId: string) => ProdutoComArtesao[];
   criarProduto: (usuarioId: string, dados: DadosNovoProduto) => ProdutoComArtesao | null;
-  editarProduto: (id: string, dados: Pick<Produto, "nome" | "descricao" | "preco" | "estoqueQtd">) => void;
+  editarProduto: (id: string, dados: Pick<Produto, "nome" | "descricao" | "preco" | "estoqueQtd" | "imagemUrl">) => void;
 }
 
 const ContextoProdutos = createContext<ValorContextoProdutos | null>(null);
@@ -137,7 +137,7 @@ export function ProvedorProdutos({ children }: { children: React.ReactNode }) {
   );
 
   const editarProduto = useCallback(
-    (id: string, dados: Pick<Produto, "nome" | "descricao" | "preco" | "estoqueQtd">) => {
+    (id: string, dados: Pick<Produto, "nome" | "descricao" | "preco" | "estoqueQtd" | "imagemUrl">) => {
       setProdutosLocais((atuais) => {
         const produtoLocal = atuais.find((p) => p.id === id);
         if (produtoLocal) return atuais.map((p) => p.id === id ? { ...p, ...dados } : p);
