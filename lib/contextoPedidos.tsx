@@ -36,6 +36,7 @@ interface ValorContextoPedidos {
   pedidos: Pedido[];
   notificacoes: NotificacaoEnvio[];
   pedidosDoComprador: (compradorId: string) => PedidoComItens[];
+  todosOsPedidos: () => PedidoComItens[];
   pedidosDoArtesao: (usuarioId: string) => PedidoComItens[];
   pedidosPendentesDoArtesao: (usuarioId: string) => number;
   vendasDoArtesao: (usuarioId: string) => number;
@@ -288,6 +289,13 @@ export function ProvedorPedidos({ children }: { children: React.ReactNode }) {
     [pedidos, pedidosLocais]
   );
 
+  // Visão do administrador: todos os pedidos da plataforma (mock + criados no app), sem
+  // filtro por comprador ou artesão.
+  const todosOsPedidos = useCallback(
+    () => todosComItens().sort(porDataDecrescente),
+    [todosComItens]
+  );
+
   const pedidosDoComprador = useCallback(
     (compradorId: string) =>
       todosComItens()
@@ -353,6 +361,7 @@ export function ProvedorPedidos({ children }: { children: React.ReactNode }) {
       pedidos,
       notificacoes,
       pedidosDoComprador,
+      todosOsPedidos,
       pedidosDoArtesao,
       pedidosPendentesDoArtesao,
       vendasDoArtesao,
@@ -365,6 +374,7 @@ export function ProvedorPedidos({ children }: { children: React.ReactNode }) {
       pedidos,
       notificacoes,
       pedidosDoComprador,
+      todosOsPedidos,
       pedidosDoArtesao,
       pedidosPendentesDoArtesao,
       vendasDoArtesao,
