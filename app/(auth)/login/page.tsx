@@ -26,55 +26,90 @@ import { useRouter } from "next/navigation";
 
 // Logins fixos de demonstração — pedidos pra que o professor consiga testar o fluxo
 // sem precisar de um cadastro persistido de verdade (o projeto ainda não tem backend).
-// O e-mail do artesão é o mesmo usuário (u2, Cooperativa de Tacaratu) que o /painel já usa
-// como ID_USUARIO_DEMO, então o login bate com os dados que aparecem lá dentro.
-const CREDENCIAL_ARTESAO = { email: "tacaratu@raizespe.dev", senha: "demo123" };
-// Mesma lógica pro comprador: é o u7 (Ana Beatriz), já usado como ID_COMPRADOR_DEMO
-// no carrinho e em "Meus Pedidos".
+// Os e-mails são os mesmos usuários mock já usados como "usuário demo" em outras telas
+// (u2 no /painel, u7 no carrinho/pedidos), pra o que aparece depois do login bater com
+// quem "logou". O admin (u9) existe só pra isso — não tem outra tela que dependa dele.
 const CREDENCIAL_COMPRADOR = { email: "ana.beatriz@raizespe.dev", senha: "demo123" };
+const CREDENCIAL_ARTESAO = { email: "tacaratu@raizespe.dev", senha: "demo123" };
+const CREDENCIAL_ADMIN = { email: "admin@raizespe.dev", senha: "demo123" };
 
-export default function LoginPage() {
+interface CredencialLogin {
+  email: string;
+  senha: string;
+}
+
+function conferir(informado: CredencialLogin, esperado: CredencialLogin): boolean {
+  return (
+    informado.email.trim().toLowerCase() === esperado.email && informado.senha === esperado.senha
+  );
+}
+
+// Um form de login por perfil (Comprador/Artesão/Admin): mesmos campos e mesmo
+// comportamento de erro, só muda a credencial esperada, o texto do botão e pra onde vai.
+function FormularioLogin({
+  rotuloEmail,
+  textoBotao,
+  credencialEsperada,
+  destino,
+}: {
+  rotuloEmail: string;
+  textoBotao: string;
+  credencialEsperada: CredencialLogin;
+  destino: string;
+}) {
   const router = useRouter();
   const toast = useToast();
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [erro, setErro] = useState(false);
 
-  const [emailComprador, setEmailComprador] = useState("");
-  const [senhaComprador, setSenhaComprador] = useState("");
-  const [emailArtesao, setEmailArtesao] = useState("");
-  const [senhaArtesao, setSenhaArtesao] = useState("");
-  const [erroComprador, setErroComprador] = useState(false);
-  const [erroArtesao, setErroArtesao] = useState(false);
-
-  function handleLoginComprador(e: FormEvent) {
+  function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    const ok =
-      emailComprador.trim().toLowerCase() === CREDENCIAL_COMPRADOR.email &&
-      senhaComprador === CREDENCIAL_COMPRADOR.senha;
-
-    if (!ok) {
-      setErroComprador(true);
+    if (!conferir({ email, senha }, credencialEsperada)) {
+      setErro(true);
       return;
     }
-    setErroComprador(false);
+    setErro(false);
     toast({ title: "Login realizado", status: "success", duration: 2000, isClosable: true, position: "top" });
-    router.push("/");
+    router.push(destino);
   }
 
-  function handleLoginArtesao(e: FormEvent) {
-    e.preventDefault();
-    const ok =
-      emailArtesao.trim().toLowerCase() === CREDENCIAL_ARTESAO.email &&
-      senhaArtesao === CREDENCIAL_ARTESAO.senha;
+  return (
+    <form onSubmit={handleSubmit}>
+      <VStack spacing={4}>
+        {erro && (
+          <Alert status="error" borderRadius="8px" fontSize="0.86rem">
+            <AlertIcon />
+            E-mail ou senha incorretos.
+          </Alert>
+        )}
+        <FormControl>
+          <FormLabel>{rotuloEmail}</FormLabel>
+          <Input
+            type="email"
+            placeholder="email@exemplo.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </FormControl>
+        <FormControl>
+          <FormLabel>Senha</FormLabel>
+          <Input
+            type="password"
+            placeholder="********"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+          />
+        </FormControl>
+        <Button type="submit" variant="solid" w="full">
+          {textoBotao}
+        </Button>
+      </VStack>
+    </form>
+  );
+}
 
-    if (!ok) {
-      setErroArtesao(true);
-      return;
-    }
-    setErroArtesao(false);
-    toast({ title: "Login realizado", status: "success", duration: 2000, isClosable: true, position: "top" });
-    // Painel do artesão já existe em /painel — não em /painel-artesao.
-    router.push("/painel");
-  }
-
+export default function LoginPage() {
   return (
     <Container maxW="md" py={20}>
       <Box bg="card" p={8} rounded="lg" shadow="md" borderWidth="1px" borderColor="border">
@@ -97,79 +132,43 @@ export default function LoginPage() {
             Artesão: <Code fontSize="0.8em">{CREDENCIAL_ARTESAO.email}</Code> /{" "}
             <Code fontSize="0.8em">{CREDENCIAL_ARTESAO.senha}</Code>
           </Text>
+          <Text color="mutedFg">
+            Admin: <Code fontSize="0.8em">{CREDENCIAL_ADMIN.email}</Code> /{" "}
+            <Code fontSize="0.8em">{CREDENCIAL_ADMIN.senha}</Code>
+          </Text>
         </Box>
 
         <Tabs isFitted variant="enclosed" colorScheme="terracota">
           <TabList mb="1em">
             <Tab>Comprador</Tab>
             <Tab>Artesão</Tab>
+            <Tab>Admin</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
-              <form onSubmit={handleLoginComprador}>
-                <VStack spacing={4}>
-                  {erroComprador && (
-                    <Alert status="error" borderRadius="8px" fontSize="0.86rem">
-                      <AlertIcon />
-                      E-mail ou senha incorretos.
-                    </Alert>
-                  )}
-                  <FormControl>
-                    <FormLabel>E-mail</FormLabel>
-                    <Input
-                      type="email"
-                      placeholder="email@exemplo.com"
-                      value={emailComprador}
-                      onChange={(e) => setEmailComprador(e.target.value)}
-                    />
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel>Senha</FormLabel>
-                    <Input
-                      type="password"
-                      placeholder="********"
-                      value={senhaComprador}
-                      onChange={(e) => setSenhaComprador(e.target.value)}
-                    />
-                  </FormControl>
-                  <Button type="submit" variant="solid" w="full">
-                    Entrar
-                  </Button>
-                </VStack>
-              </form>
+              <FormularioLogin
+                rotuloEmail="E-mail"
+                textoBotao="Entrar"
+                credencialEsperada={CREDENCIAL_COMPRADOR}
+                destino="/"
+              />
             </TabPanel>
             <TabPanel>
-              <form onSubmit={handleLoginArtesao}>
-                <VStack spacing={4}>
-                  {erroArtesao && (
-                    <Alert status="error" borderRadius="8px" fontSize="0.86rem">
-                      <AlertIcon />
-                      E-mail ou senha incorretos.
-                    </Alert>
-                  )}
-                  <FormControl>
-                    <FormLabel>E-mail (Artesão)</FormLabel>
-                    <Input
-                      type="email"
-                      placeholder="artesao@exemplo.com"
-                      value={emailArtesao}
-                      onChange={(e) => setEmailArtesao(e.target.value)}
-                    />
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel>Senha</FormLabel>
-                    <Input
-                      type="password"
-                      placeholder="********"
-                      value={senhaArtesao}
-                      onChange={(e) => setSenhaArtesao(e.target.value)}
-                    />
-                  </FormControl>
-                  <Button type="submit" variant="solid" w="full">
-                    Entrar no Painel do Artesão
-                  </Button>
-                </VStack>
-              </form>
+              <FormularioLogin
+                rotuloEmail="E-mail (Artesão)"
+                textoBotao="Entrar no Painel do Artesão"
+                credencialEsperada={CREDENCIAL_ARTESAO}
+                // Painel do artesão já existe em /painel — não em /painel-artesao.
+                destino="/painel"
+              />
+            </TabPanel>
+            <TabPanel>
+              <FormularioLogin
+                rotuloEmail="E-mail (Admin)"
+                textoBotao="Entrar na Administração"
+                credencialEsperada={CREDENCIAL_ADMIN}
+                destino="/admin"
+              />
             </TabPanel>
           </TabPanels>
         </Tabs>
