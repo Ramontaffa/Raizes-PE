@@ -100,6 +100,28 @@ npm run lint
 npx tsc --noEmit
 ```
 
+## 🔐 Login de Demonstração
+
+Como o projeto ainda não tem backend/autenticação real, o login em `/login` usa três credenciais fixas para simular os perfis de uso da plataforma:
+
+| Perfil | E-mail | Senha | Destino após login |
+|---|---|---|---|
+| Comprador | `ana.beatriz@raizespe.dev` | `demo123` | `/` (vitrine) |
+| Artesão | `tacaratu@raizespe.dev` | `demo123` | `/painel` |
+| Admin | `admin@raizespe.dev` | `demo123` | `/admin` |
+
+Também existe uma tela de cadastro (`/cadastro`), mas ela é apenas ilustrativa — os dados preenchidos não são persistidos. Para testar de verdade, use uma das credenciais acima.
+
+### Painel Administrativo (`/admin`)
+
+Área de gestão da plataforma como um todo (diferente do `/painel`, que é a visão de *um* artesão específico):
+
+- **Dashboard**: total de vendas, artesãos ativos, produtos cadastrados e pedidos pendentes, com gráfico de vendas por técnica.
+- **Gestão de Artesãos** (`/admin/artesaos`)
+- **Produtos e Moderação** (`/admin/produtos`)
+- **Visão de Pedidos** (`/admin/pedidos`)
+- **Categorias e Técnicas** (`/admin/categorias`)
+
 ## 📁 Estrutura de Pastas
 
 ```text

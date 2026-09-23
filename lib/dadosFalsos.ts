@@ -18,6 +18,7 @@ export const usuarios: Usuario[] = [
   { id: "u6", nome: "Ateliê Barro Vivo", email: "barrovivo@raizespe.dev", tipo: "artesao", dataCadastro: "2025-03-18" },
   { id: "u7", nome: "Ana Beatriz", email: "ana.beatriz@raizespe.dev", tipo: "comprador", dataCadastro: "2025-05-02" },
   { id: "u8", nome: "Carlos Andrade", email: "carlos.andrade@raizespe.dev", tipo: "comprador", dataCadastro: "2025-05-14" },
+  { id: "u9", nome: "Administração Raízes PE", email: "admin@raizespe.dev", tipo: "admin", dataCadastro: "2025-01-01" },
 ];
 
 export const artesaos: Artesao[] = [
