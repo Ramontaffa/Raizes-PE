@@ -8,6 +8,7 @@ import FiltroTecnicas from "@/components/FiltroTecnicas";
 import SeletorFiltro from "@/components/SeletorFiltro";
 import GradeProdutos from "@/components/GradeProdutos";
 import SecaoRecomendados from "@/components/SecaoRecomendados";
+import MensagemErro from "@/components/MensagemErro";
 import { getProdutos, tecnicas, regioes, categorias } from "@/lib/apiFalsa";
 import type { ProdutoComArtesao, Tecnica } from "@/lib/tipos";
 
@@ -25,21 +26,36 @@ export default function VisaoVitrine() {
   const [busca, setBusca] = useState(parametrosBusca.get("q") ?? "");
   const [produtos, setProdutos] = useState<ProdutoComArtesao[]>([]);
   const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState(false);
+  const [tentativa, setTentativa] = useState(0);
 
   useEffect(() => {
+    let ativo = true;
     setCarregando(true);
+    setErro(false);
     const tecnica = filtroTecnica === "Todas" ? undefined : (filtroTecnica as Tecnica);
     const regiao = filtroRegiao === TODAS_REGIOES ? undefined : filtroRegiao;
     const categoria = filtroCategoria === TODAS_CATEGORIAS ? undefined : filtroCategoria;
     // pequeno atraso pra não disparar uma "chamada de API" a cada tecla digitada
     const temporizador = setTimeout(() => {
-      getProdutos(tecnica, busca, regiao, categoria).then((dados) => {
-        setProdutos(dados);
-        setCarregando(false);
-      });
+      getProdutos(tecnica, busca, regiao, categoria)
+        .then((dados) => {
+          if (!ativo) return;
+          setProdutos(dados);
+          setErro(false);
+        })
+        .catch(() => {
+          if (ativo) setErro(true);
+        })
+        .finally(() => {
+          if (ativo) setCarregando(false);
+        });
     }, 200);
-    return () => clearTimeout(temporizador);
-  }, [filtroTecnica, filtroRegiao, filtroCategoria, busca]);
+    return () => {
+      ativo = false;
+      clearTimeout(temporizador);
+    };
+  }, [filtroTecnica, filtroRegiao, filtroCategoria, busca, tentativa]);
 
   const algumFiltroAtivo =
     filtroTecnica !== "Todas" || filtroRegiao !== TODAS_REGIOES || filtroCategoria !== TODAS_CATEGORIAS;
@@ -112,15 +128,19 @@ export default function VisaoVitrine() {
         )}
 
         <Box pb={16}>
-          <GradeProdutos
-            produtos={produtos}
-            carregando={carregando}
-            mensagemVazia={
-              busca
-                ? `Nenhuma peça encontrada para "${busca}". Tente outra técnica, região, categoria ou termo de busca.`
-                : "Nenhuma peça encontrada para esse filtro."
-            }
-          />
+          {erro ? (
+            <MensagemErro aoTentarNovamente={() => setTentativa((atual) => atual + 1)} />
+          ) : (
+            <GradeProdutos
+              produtos={produtos}
+              carregando={carregando}
+              mensagemVazia={
+                busca
+                  ? `Nenhuma peça encontrada para "${busca}". Tente outra técnica, região, categoria ou termo de busca.`
+                  : "Nenhuma peça encontrada para esse filtro."
+              }
+            />
+          )}
         </Box>
       </Box>
     </>

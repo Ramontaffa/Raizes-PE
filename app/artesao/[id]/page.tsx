@@ -7,23 +7,43 @@ import { Box, Heading, Text, HStack, Button, Link as ChakraLink } from "@chakra-
 import { FiArrowLeft, FiMapPin } from "react-icons/fi";
 import BarraNavegacao from "@/components/BarraNavegacao";
 import GradeProdutos from "@/components/GradeProdutos";
+import MensagemErro from "@/components/MensagemErro";
 import { getPerfilArtesao } from "@/lib/apiFalsa";
 import type { PerfilArtesao } from "@/lib/tipos";
 
 export default function Pagina() {
   const parametros = useParams<{ id: string }>();
   const [perfil, setPerfil] = useState<PerfilArtesao | null | undefined>(undefined);
+  const [erro, setErro] = useState(false);
+  const [tentativa, setTentativa] = useState(0);
 
   useEffect(() => {
     let ativo = true;
-    getPerfilArtesao(parametros.id).then((p) => {
-      if (!ativo) return;
-      setPerfil(p ?? null);
-    });
+    setErro(false);
+    setPerfil(undefined);
+    getPerfilArtesao(parametros.id)
+      .then((p) => {
+        if (!ativo) return;
+        setPerfil(p ?? null);
+      })
+      .catch(() => {
+        if (ativo) setErro(true);
+      });
     return () => {
       ativo = false;
     };
-  }, [parametros.id]);
+  }, [parametros.id, tentativa]);
+
+  if (erro) {
+    return (
+      <>
+        <BarraNavegacao />
+        <Box maxW="1180px" mx="auto" px={{ base: 5, md: 10 }} py={20}>
+          <MensagemErro mensagem="Não foi possível carregar o perfil do artesão." aoTentarNovamente={() => setTentativa((atual) => atual + 1)} />
+        </Box>
+      </>
+    );
+  }
 
   if (perfil === undefined) {
     return (
