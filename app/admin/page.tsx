@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Box, Heading, SimpleGrid } from "@chakra-ui/react";
+import { Box, Heading, SimpleGrid, useColorModeValue } from "@chakra-ui/react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import CartaoEstatistica from "@/components/CartaoEstatistica";
 import { artesaos } from "@/lib/dadosFalsos";
@@ -11,6 +11,11 @@ import { useProdutos } from "@/lib/contextoProdutos";
 export default function AdminDashboard() {
   const { todosOsPedidos } = usePedidos();
   const { produtosDoArtesao } = useProdutos();
+  const tooltipStyle = {
+    backgroundColor: useColorModeValue("#ffffff", "#362e2a"),
+    borderColor: useColorModeValue("#e2d7cc", "#4a3b32"),
+    color: useColorModeValue("#2d2420", "#f4efe9"),
+  };
 
   const pedidos = useMemo(() => todosOsPedidos(), [todosOsPedidos]);
   const produtos = useMemo(
@@ -75,6 +80,9 @@ export default function AdminDashboard() {
             <YAxis />
             <Tooltip
               formatter={(valor) => `R$ ${Number(valor).toFixed(2).replace(".", ",")}`}
+              contentStyle={tooltipStyle}
+              labelStyle={{ color: tooltipStyle.color }}
+              itemStyle={{ color: tooltipStyle.color }}
             />
             <Bar dataKey="vendas" name="Vendas" fill="#b75c40" />
           </BarChart>
