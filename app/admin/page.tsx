@@ -11,7 +11,6 @@ import { useProdutos } from "@/lib/contextoProdutos";
 export default function AdminDashboard() {
   const { todosOsPedidos } = usePedidos();
   const { produtosDoArtesao } = useProdutos();
-
   const pedidos = useMemo(() => todosOsPedidos(), [todosOsPedidos]);
   const produtos = useMemo(
     () => artesaos.flatMap((a) => produtosDoArtesao(a.usuarioId)),
@@ -75,6 +74,12 @@ export default function AdminDashboard() {
             <YAxis />
             <Tooltip
               formatter={(valor) => `R$ ${Number(valor).toFixed(2).replace(".", ",")}`}
+              contentStyle={{
+                backgroundColor: "var(--chakra-colors-card)",
+                borderColor: "var(--chakra-colors-border)",
+              }}
+              labelStyle={{ color: "var(--chakra-colors-fg)" }}
+              itemStyle={{ color: "var(--chakra-colors-fg)" }}
             />
             <Bar dataKey="vendas" name="Vendas" fill="#b75c40" />
           </BarChart>

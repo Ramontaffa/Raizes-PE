@@ -1,11 +1,23 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Badge, Box, Button, Flex, Heading, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
+import NextLink from "next/link";
 import { artesaos, usuarios } from "@/lib/dadosFalsos";
 import { useProdutos } from "@/lib/contextoProdutos";
 
 export default function GestaoArtesaosPage() {
   const { produtosDoArtesao } = useProdutos();
+  const [aprovado, setAprovado] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    setAprovado(localStorage.getItem("raizes-pe:artesao-aprovado") === "true");
+  }, []);
+
+  const aprovarArtesao = () => {
+    localStorage.setItem("raizes-pe:artesao-aprovado", "true");
+    setAprovado(true);
+  };
 
   return (
     <Box>
@@ -33,7 +45,8 @@ export default function GestaoArtesaosPage() {
               );
               // Ainda não existe status de aprovação no modelo: o primeiro aparece como
               // pendente só para demonstrar o fluxo (igual à versão da branch mvp).
-              const pendente = indice === 0;
+              const carregandoAprovacao = indice === 0 && aprovado === null;
+              const pendente = indice === 0 && aprovado === false;
 
               return (
                 <Tr key={artesao.id}>
@@ -50,22 +63,22 @@ export default function GestaoArtesaosPage() {
                   </Td>
                   <Td>
                     <Badge
-                      bg={pendente ? "secondary" : "accent"}
-                      color={pendente ? "secondaryFg" : "accentFg"}
+                      bg={carregandoAprovacao ? "muted" : pendente ? "secondary" : "accent"}
+                      color={carregandoAprovacao ? "mutedFg" : pendente ? "secondaryFg" : "accentFg"}
                       borderRadius="full"
                       px={3}
                       textTransform="none"
                     >
-                      {pendente ? "Pendente" : "Aprovado"}
+                      {carregandoAprovacao ? "Carregando..." : pendente ? "Pendente" : "Aprovado"}
                     </Badge>
                   </Td>
                   <Td>
                     <Flex gap={2}>
-                      <Button size="sm" variant="outline">
+                      <Button as={NextLink} href={`/artesao/${artesao.id}`} size="sm" variant="outline">
                         Ver Perfil
                       </Button>
                       {pendente && (
-                        <Button size="sm" variant="solid">
+                        <Button size="sm" variant="solid" onClick={aprovarArtesao}>
                           Aprovar
                         </Button>
                       )}
