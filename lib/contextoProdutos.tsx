@@ -27,6 +27,7 @@ interface ValorContextoProdutos {
   produtosLocais: Produto[];
   produtosDoArtesao: (usuarioId: string) => ProdutoComArtesao[];
   criarProduto: (usuarioId: string, dados: DadosNovoProduto) => ProdutoComArtesao | null;
+  editarProduto: (id: string, dados: Pick<Produto, "nome" | "descricao" | "preco" | "estoqueQtd" | "imagemUrl">) => void;
 }
 
 const ContextoProdutos = createContext<ValorContextoProdutos | null>(null);
@@ -135,14 +136,30 @@ export function ProvedorProdutos({ children }: { children: React.ReactNode }) {
     []
   );
 
+  const editarProduto = useCallback(
+    (id: string, dados: Pick<Produto, "nome" | "descricao" | "preco" | "estoqueQtd" | "imagemUrl">) => {
+      setProdutosLocais((atuais) => {
+        const produtoLocal = atuais.find((p) => p.id === id);
+        if (produtoLocal) return atuais.map((p) => p.id === id ? { ...p, ...dados } : p);
+        const produtoMock = produtosIniciais.find((p) => p.id === id);
+        if (!produtoMock) return atuais;
+        return [...atuais, { ...produtoMock, ...dados }];
+      });
+    },
+    []
+  );
+
   // Produtos do mock + os criados no app, na ordem certa pro painel (mais novo primeiro).
   const produtosDoArtesao = useCallback(
     (usuarioId: string): ProdutoComArtesao[] => {
       const artesao = artesaos.find((a) => a.usuarioId === usuarioId);
       if (!artesao) return [];
 
-      const doMock = produtosIniciais.filter((p) => p.artesaoId === artesao.id);
-      const doApp = produtosLocais.filter((p) => p.artesaoId === artesao.id);
+      const doMock = produtosIniciais
+        .filter((p) => p.artesaoId === artesao.id)
+        .map((p) => produtosLocais.find((local) => local.id === p.id) ?? p);
+      const idsMock = new Set(produtosIniciais.map((p) => p.id));
+      const doApp = produtosLocais.filter((p) => p.artesaoId === artesao.id && !idsMock.has(p.id));
 
       return [...doApp, ...doMock].map(paraProdutoComArtesao);
     },
@@ -150,8 +167,8 @@ export function ProvedorProdutos({ children }: { children: React.ReactNode }) {
   );
 
   const valor = useMemo<ValorContextoProdutos>(
-    () => ({ produtosLocais, produtosDoArtesao, criarProduto }),
-    [produtosLocais, produtosDoArtesao, criarProduto]
+    () => ({ produtosLocais, produtosDoArtesao, criarProduto, editarProduto }),
+    [produtosLocais, produtosDoArtesao, criarProduto, editarProduto]
   );
 
   return <ContextoProdutos.Provider value={valor}>{children}</ContextoProdutos.Provider>;
