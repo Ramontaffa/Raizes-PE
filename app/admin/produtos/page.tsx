@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Badge, Box, Button, Flex, Heading, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
 import { artesaos } from "@/lib/dadosFalsos";
 import { useProdutos } from "@/lib/contextoProdutos";
+import DialogoConfirmacao from "@/components/DialogoConfirmacao";
 
 const CHAVE_MODERACAO = "raizes-pe:moderacao-produtos";
 const EM_REVISAO_INICIAL = new Set(["p1", "p5"]);
@@ -12,6 +13,7 @@ type AcaoModeracao = "aprovado" | "removido";
 export default function ModeracaoProdutosPage() {
   const { produtosDoArtesao } = useProdutos();
   const [moderacao, setModeracao] = useState<Record<string, AcaoModeracao> | null>(null);
+  const [produtoParaRemover, setProdutoParaRemover] = useState<{ id: string; nome: string } | null>(null);
 
   useEffect(() => {
     try {
@@ -89,9 +91,7 @@ export default function ModeracaoProdutosPage() {
                           Aprovar
                         </Button>
                       )}
-                      <Button size="sm" variant="outline" color="red.600" borderColor="red.200" onClick={() => {
-                        if (window.confirm(`Remover "${produto.nome}" desta tabela?`)) mudarStatus(produto.id, "removido");
-                      }}>
+                      <Button size="sm" variant="outline" color="red.600" borderColor="red.200" onClick={() => setProdutoParaRemover({ id: produto.id, nome: produto.nome })}>
                         Remover
                       </Button>
                     </Flex>
@@ -102,6 +102,17 @@ export default function ModeracaoProdutosPage() {
           </Tbody>
         </Table>
       </Box>
+      <DialogoConfirmacao
+        aberto={produtoParaRemover !== null}
+        titulo="Remover produto da tabela?"
+        mensagem={`"${produtoParaRemover?.nome ?? ""}" deixará de aparecer nesta tabela de demonstração.`}
+        rotuloConfirmar="Remover"
+        aoCancelar={() => setProdutoParaRemover(null)}
+        aoConfirmar={() => {
+          if (produtoParaRemover) mudarStatus(produtoParaRemover.id, "removido");
+          setProdutoParaRemover(null);
+        }}
+      />
     </Box>
   );
 }

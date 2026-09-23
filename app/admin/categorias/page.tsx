@@ -27,6 +27,7 @@ import {
 } from "@chakra-ui/react";
 import { FiEdit, FiPlus, FiTrash2 } from "react-icons/fi";
 import { categorias } from "@/lib/apiFalsa";
+import DialogoConfirmacao from "@/components/DialogoConfirmacao";
 
 const CHAVE_CATEGORIAS = "raizes-pe:categorias";
 
@@ -46,6 +47,7 @@ export default function GestaoCategoriasPage() {
   const [nome, setNome] = useState("");
   const [editando, setEditando] = useState<string | null>(null);
   const [erro, setErro] = useState("");
+  const [categoriaParaExcluir, setCategoriaParaExcluir] = useState<string | null>(null);
 
   useEffect(() => {
     try {
@@ -86,11 +88,6 @@ export default function GestaoCategoriasPage() {
     onClose();
   }
 
-  function excluir(categoria: string) {
-    if (!window.confirm(`Excluir a categoria "${categoria}"?`)) return;
-    setLista((atual) => (atual ?? []).filter((item) => item !== categoria));
-  }
-
   return (
     <Box>
       <Flex justify="space-between" align="center" mb={6} wrap="wrap" gap={4}>
@@ -123,7 +120,7 @@ export default function GestaoCategoriasPage() {
                     <Button size="sm" variant="ghost" aria-label={`Editar ${nome}`} onClick={() => abrirFormulario(nome)}>
                       <FiEdit />
                     </Button>
-                    <Button size="sm" variant="ghost" color="red.600" aria-label={`Excluir ${nome}`} onClick={() => excluir(nome)}>
+                    <Button size="sm" variant="ghost" color="red.600" aria-label={`Excluir ${nome}`} onClick={() => setCategoriaParaExcluir(nome)}>
                       <FiTrash2 />
                     </Button>
                   </Flex>
@@ -161,6 +158,17 @@ export default function GestaoCategoriasPage() {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      <DialogoConfirmacao
+        aberto={categoriaParaExcluir !== null}
+        titulo="Excluir categoria?"
+        mensagem={`"${categoriaParaExcluir ?? ""}" será removida desta lista de demonstração.`}
+        rotuloConfirmar="Excluir"
+        aoCancelar={() => setCategoriaParaExcluir(null)}
+        aoConfirmar={() => {
+          setLista((atual) => (atual ?? []).filter((item) => item !== categoriaParaExcluir));
+          setCategoriaParaExcluir(null);
+        }}
+      />
     </Box>
   );
 }
