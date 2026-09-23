@@ -9,6 +9,7 @@ import LinhaProduto from "@/components/LinhaProduto";
 import LinhaPedido from "@/components/LinhaPedido";
 import ModalAdicionarProduto, { DadosProdutoSubmetido } from "@/components/ModalAdicionarProduto";
 import ModalEditarProduto from "@/components/ModalEditarProduto";
+import MensagemErro from "@/components/MensagemErro";
 import type { ProdutoComArtesao } from "@/lib/tipos";
 import { getEstatisticasPainel } from "@/lib/apiFalsa";
 import { usePedidos } from "@/lib/contextoPedidos";
@@ -22,6 +23,8 @@ const ID_USUARIO_DEMO = "u2";
 export default function Pagina() {
   const [estatisticas, setEstatisticas] = useState<EstatisticasPainel | null>(null);
   const [produtoEmEdicao, setProdutoEmEdicao] = useState<ProdutoComArtesao | null>(null);
+  const [erroEstatisticas, setErroEstatisticas] = useState(false);
+  const [tentativaEstatisticas, setTentativaEstatisticas] = useState(0);
   const { pedidosDoArtesao, pedidosPendentesDoArtesao, vendasDoArtesao, marcarComoEnviado } =
     usePedidos();
   const { produtosDoArtesao, criarProduto, editarProduto } = useProdutos();
@@ -35,8 +38,11 @@ export default function Pagina() {
   const produtos = produtosDoArtesao(ID_USUARIO_DEMO);
 
   useEffect(() => {
-    getEstatisticasPainel(ID_USUARIO_DEMO).then(setEstatisticas);
-  }, []);
+    setErroEstatisticas(false);
+    getEstatisticasPainel(ID_USUARIO_DEMO)
+      .then(setEstatisticas)
+      .catch(() => setErroEstatisticas(true));
+  }, [tentativaEstatisticas]);
 
   function enviarPedido(pedidoId: string) {
     marcarComoEnviado(pedidoId);
@@ -79,6 +85,14 @@ export default function Pagina() {
           </Button>
         </Flex>
 
+        {erroEstatisticas ? (
+          <Box mb={10}>
+            <MensagemErro
+              mensagem="Não foi possível carregar as estatísticas da loja."
+              aoTentarNovamente={() => setTentativaEstatisticas((atual) => atual + 1)}
+            />
+          </Box>
+        ) : (
         <SimpleGrid columns={{ base: 1, md: 3 }} spacing={5} mb={10}>
           {estatisticas && (
             <>
@@ -107,6 +121,7 @@ export default function Pagina() {
             </>
           )}
         </SimpleGrid>
+        )}
 
         {estatisticas && (
           <GraficoVendas

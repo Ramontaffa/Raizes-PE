@@ -16,6 +16,7 @@ import {
 import { FiArrowLeft, FiMapPin } from "react-icons/fi";
 import BarraNavegacao from "@/components/BarraNavegacao";
 import GradeProdutos from "@/components/GradeProdutos";
+import MensagemErro from "@/components/MensagemErro";
 import ResumoAvaliacao from "@/components/ResumoAvaliacao";
 import {
   getProdutoPorId,
@@ -32,23 +33,61 @@ export default function Pagina() {
   const [produto, setProduto] = useState<ProdutoComArtesao | null | undefined>(undefined);
   const [relacionados, setRelacionados] = useState<ProdutoComArtesao[]>([]);
   const [resumoAvaliacoes, setResumoAvaliacoes] = useState<ResumoAvaliacoes | null>(null);
+  const [erro, setErro] = useState(false);
+  const [tentativa, setTentativa] = useState(0);
 
   useEffect(() => {
     let ativo = true;
-    getProdutoPorId(parametros.id).then((p) => {
-      if (!ativo) return;
-      setProduto(p ?? null);
-    });
+    setErro(false);
+    setProduto(undefined);
+    getProdutoPorId(parametros.id)
+      .then((p) => {
+        if (!ativo) return;
+        setProduto(p ?? null);
+      })
+      .catch(() => {
+        if (ativo) setErro(true);
+      });
     return () => {
       ativo = false;
     };
-  }, [parametros.id]);
+  }, [parametros.id, tentativa]);
 
   useEffect(() => {
     if (!produto) return;
-    getProdutosRelacionados(produto.id).then(setRelacionados);
-    getResumoAvaliacoes(produto.id).then(setResumoAvaliacoes);
+    let ativo = true;
+    setErroSecundario(false);
+    getProdutosRelacionados(produto.id)
+      .then((dados) => {
+        if (ativo) setRelacionados(dados);
+      })
+      .catch(() => {
+        if (ativo) setErroSecundario(true);
+      });
+    getResumoAvaliacoes(produto.id)
+      .then((dados) => {
+        if (ativo) setResumoAvaliacoes(dados);
+      })
+      .catch(() => {
+        if (ativo) setErroSecundario(true);
+      });
+    return () => {
+      ativo = false;
+    };
   }, [produto]);
+
+  const [erroSecundario, setErroSecundario] = useState(false);
+
+  if (erro) {
+    return (
+      <>
+        <BarraNavegacao />
+        <Box maxW="1180px" mx="auto" px={{ base: 5, md: 10 }} py={20}>
+          <MensagemErro mensagem="Não foi possível carregar este produto." aoTentarNovamente={() => setTentativa((atual) => atual + 1)} />
+        </Box>
+      </>
+    );
+  }
 
   if (produto === undefined) {
     return (
@@ -129,6 +168,14 @@ export default function Pagina() {
             {resumoAvaliacoes && (
               <Box mb={4}>
                 <ResumoAvaliacao resumo={resumoAvaliacoes} />
+              </Box>
+            )}
+            {erroSecundario && (
+              <Box mb={4}>
+                <MensagemErro
+                  mensagem="Não foi possível carregar avaliações e recomendações."
+                  aoTentarNovamente={() => setTentativa((atual) => atual + 1)}
+                />
               </Box>
             )}
 
