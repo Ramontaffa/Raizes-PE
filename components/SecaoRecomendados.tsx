@@ -30,7 +30,7 @@ export default function SecaoRecomendados({
 }: SecaoRecomendadosProps) {
   const [compradorId, setCompradorId] = useState<string | undefined>(compradorIdInicial);
   const [recomendados, setRecomendados] = useState<ProdutoRecomendado[]>([]);
-  const { adicionarItem } = useCarrinho();
+  const { itens, adicionarItem } = useCarrinho();
   const toast = useToast();
 
   useEffect(() => {
@@ -115,6 +115,8 @@ export default function SecaoRecomendados({
 
       <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} spacing={5}>
         {recomendados.map((prod) => {
+          const quantidadeNoCarrinho = itens.find((item) => item.produtoId === prod.id)?.quantidade ?? 0;
+
           return (
             <Box
               key={prod.id}
@@ -152,7 +154,7 @@ export default function SecaoRecomendados({
                 </Box>
               </ChakraLink>
 
-              <Box p={4} display="flex" flexDirection="column" flex="1">
+              <Box p={{ base: 4, md: 5 }} display="flex" flexDirection="column" flex="1">
                 {/* Badge explicativo da IA */}
                 <Box mb={2}>
                   <Badge
@@ -193,17 +195,26 @@ export default function SecaoRecomendados({
                   <Text noOfLines={1}>{prod.artesaoRegiao}</Text>
                 </HStack>
 
-                <Flex justify="space-between" align="center" mt="auto" pt={2} borderTop="1px solid" borderColor="border">
-                  <Text fontWeight={600} fontSize="0.95rem">
-                    R$ {prod.preco.toFixed(2).replace(".", ",")}
-                  </Text>
+                <Flex justify="space-between" align="center" mt="auto" pt={2} borderTop="1px solid" borderColor="border" gap={2}>
+                  <Box>
+                    <Text fontWeight={600} fontSize="0.95rem">
+                      R$ {prod.preco.toFixed(2).replace(".", ",")}
+                    </Text>
+                    {quantidadeNoCarrinho > 0 && (
+                      <Text fontSize="0.68rem" color="primary" fontWeight={600} mt={1}>
+                        {quantidadeNoCarrinho} {quantidadeNoCarrinho === 1 ? "unidade" : "unidades"} no carrinho
+                      </Text>
+                    )}
+                  </Box>
                   <Button
                     size="xs"
-                    variant="outline"
+                    px={7}
+                    py={2}
+                    variant={quantidadeNoCarrinho > 0 ? "solid" : "outline"}
                     leftIcon={<FiShoppingCart size={12} />}
                     onClick={() => handleAdicionar(prod)}
                   >
-                    Adicionar
+                    {quantidadeNoCarrinho > 0 ? `Adicionar +1` : "Adicionar"}
                   </Button>
                 </Flex>
               </Box>
