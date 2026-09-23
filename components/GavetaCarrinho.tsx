@@ -87,7 +87,7 @@ function LinhaDoCarrinho({ item }: { item: ItemCarrinhoComProduto }) {
             variant="ghost"
             size="xs"
             color="mutedFg"
-            px={0}
+            px={2}
             mt={2}
             onClick={() => removerItem(produto.id)}
           >
