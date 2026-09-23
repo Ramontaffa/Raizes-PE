@@ -144,3 +144,4 @@ npx tsc --noEmit
 - Matheus Conolly
 - Leonardo Felipe Demétrio
 - Hilton Resende Montes Neto
+- Maria Clara Miranda Ferraz
