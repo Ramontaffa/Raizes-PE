@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Badge, Box, Button, Flex, Heading, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { artesaos, usuarios } from "@/lib/dadosFalsos";
@@ -9,6 +9,15 @@ import { useProdutos } from "@/lib/contextoProdutos";
 export default function GestaoArtesaosPage() {
   const { produtosDoArtesao } = useProdutos();
   const [aprovado, setAprovado] = useState(false);
+
+  useEffect(() => {
+    setAprovado(localStorage.getItem("raizes-pe:artesao-aprovado") === "true");
+  }, []);
+
+  const aprovarArtesao = () => {
+    localStorage.setItem("raizes-pe:artesao-aprovado", "true");
+    setAprovado(true);
+  };
 
   return (
     <Box>
@@ -68,7 +77,7 @@ export default function GestaoArtesaosPage() {
                         Ver Perfil
                       </Button>
                       {pendente && (
-                        <Button size="sm" variant="solid" onClick={() => setAprovado(true)}>
+                        <Button size="sm" variant="solid" onClick={aprovarArtesao}>
                           Aprovar
                         </Button>
                       )}
