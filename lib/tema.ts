@@ -64,11 +64,16 @@ const tema = extendTheme({
         solid: {
           bg: "primary",
           color: "primaryFg",
-          _hover: { opacity: 0.92 },
+          _hover: { bg: "primary", opacity: 0.92 },
         },
         outline: {
           borderColor: "border",
           color: "primary",
+          _hover: { bg: "muted", color: "primary" },
+        },
+        ghost: {
+          color: "primary",
+          _hover: { bg: "muted", color: "primary" },
         },
       },
     },
