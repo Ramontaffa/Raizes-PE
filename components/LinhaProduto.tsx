@@ -2,7 +2,7 @@ import { Flex, Box, Text, Button } from "@chakra-ui/react";
 import { estiloFundoProduto } from "@/lib/arteProduto";
 import type { ProdutoComArtesao } from "@/lib/tipos";
 
-export default function LinhaProduto({ produto }: { produto: ProdutoComArtesao }) {
+export default function LinhaProduto({ produto, aoEditar }: { produto: ProdutoComArtesao; aoEditar: (produto: ProdutoComArtesao) => void }) {
   return (
     <Flex
       align="center"
@@ -32,7 +32,7 @@ export default function LinhaProduto({ produto }: { produto: ProdutoComArtesao }
         </Text>
         <Text fontWeight={500}>R$ {produto.preco.toFixed(2).replace(".", ",")}</Text>
       </Box>
-      <Button variant="outline" size="sm" borderColor="border" color="primary">
+      <Button variant="outline" size="sm" borderColor="border" color="primary" onClick={() => aoEditar(produto)}>
         Editar
       </Button>
     </Flex>

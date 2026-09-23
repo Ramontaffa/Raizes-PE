@@ -8,6 +8,8 @@ import GraficoVendas from "@/components/GraficoVendas";
 import LinhaProduto from "@/components/LinhaProduto";
 import LinhaPedido from "@/components/LinhaPedido";
 import ModalAdicionarProduto, { DadosProdutoSubmetido } from "@/components/ModalAdicionarProduto";
+import ModalEditarProduto from "@/components/ModalEditarProduto";
+import type { ProdutoComArtesao } from "@/lib/tipos";
 import { getEstatisticasPainel } from "@/lib/apiFalsa";
 import { usePedidos } from "@/lib/contextoPedidos";
 import { useProdutos } from "@/lib/contextoProdutos";
@@ -19,9 +21,10 @@ const ID_USUARIO_DEMO = "u2";
 
 export default function Pagina() {
   const [estatisticas, setEstatisticas] = useState<EstatisticasPainel | null>(null);
+  const [produtoEmEdicao, setProdutoEmEdicao] = useState<ProdutoComArtesao | null>(null);
   const { pedidosDoArtesao, pedidosPendentesDoArtesao, vendasDoArtesao, marcarComoEnviado } =
     usePedidos();
-  const { produtosDoArtesao, criarProduto } = useProdutos();
+  const { produtosDoArtesao, criarProduto, editarProduto } = useProdutos();
   const { isOpen: modalAberto, onOpen: abrirModal, onClose: fecharModal } = useDisclosure();
   const toast = useToast();
 
@@ -163,12 +166,18 @@ export default function Pagina() {
               Nenhum produto cadastrado ainda.
             </Text>
           ) : (
-            produtos.map((p) => <LinhaProduto key={p.id} produto={p} />)
+            produtos.map((p) => <LinhaProduto key={p.id} produto={p} aoEditar={setProdutoEmEdicao} />)
           )}
         </Box>
       </Box>
 
       <ModalAdicionarProduto aberto={modalAberto} aoFechar={fecharModal} aoSalvar={salvarNovoProduto} />
+      <ModalEditarProduto
+        produto={produtoEmEdicao}
+        aberto={!!produtoEmEdicao}
+        aoFechar={() => setProdutoEmEdicao(null)}
+        aoSalvar={editarProduto}
+      />
     </>
   );
 }
