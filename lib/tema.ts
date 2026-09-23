@@ -65,15 +65,18 @@ const tema = extendTheme({
           bg: "primary",
           color: "primaryFg",
           _hover: { bg: "primary", opacity: 0.92 },
+          _active: { bg: "primary", opacity: 0.82 },
         },
         outline: {
           borderColor: "border",
           color: "primary",
           _hover: { bg: "muted", color: "primary" },
+          _active: { bg: "muted", color: "primary" },
         },
         ghost: {
           color: "primary",
           _hover: { bg: "muted", color: "primary" },
+          _active: { bg: "muted", color: "primary" },
         },
       },
     },
