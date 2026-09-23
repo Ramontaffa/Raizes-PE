@@ -138,6 +138,18 @@ export default function BarraNavegacao({ valorBusca, aoMudarBusca }: PropsBarraN
         </Box>
 
         <HStack spacing={1} ml={{ base: "auto", md: 0 }}>
+          <ChakraLink
+            as={NextLink}
+            href="/login"
+            fontSize="sm"
+            color="mutedFg"
+            fontWeight={500}
+            px={2}
+            display={{ base: "none", sm: "block" }}
+            _hover={{ color: "primary", textDecoration: "none" }}
+          >
+            Entrar
+          </ChakraLink>
           <IconButton
             aria-label="Alternar tema"
             icon={colorMode === "dark" ? <FiSun /> : <FiMoon />}
