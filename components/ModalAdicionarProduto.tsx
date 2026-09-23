@@ -156,13 +156,25 @@ export default function ModalAdicionarProduto({
   return (
     <Modal isOpen={aberto} onClose={limparEFechar} size="lg" isCentered>
       <ModalOverlay />
-      <ModalContent as="form" onSubmit={aoSubmeter} bg="bg" color="fg">
-        <ModalHeader fontFamily="heading" fontWeight={600} borderBottom="1px solid" borderColor="border">
+      <ModalContent
+        as="form"
+        onSubmit={aoSubmeter}
+        bg="bg"
+        color="fg"
+        maxH="calc(100vh - 2rem)"
+      >
+        <ModalHeader
+          flexShrink={0}
+          fontFamily="heading"
+          fontWeight={600}
+          borderBottom="1px solid"
+          borderColor="border"
+        >
           Adicionar Produto
         </ModalHeader>
         <ModalCloseButton />
 
-        <ModalBody py={6}>
+        <ModalBody overflowY="auto" py={{ base: 4, md: 5 }}>
           <VStack spacing={5} align="stretch">
             <FormControl>
               <FormLabel fontSize="0.86rem">Foto do produto</FormLabel>
@@ -302,7 +314,7 @@ export default function ModalAdicionarProduto({
           </VStack>
         </ModalBody>
 
-        <ModalFooter borderTop="1px solid" borderColor="border" gap={3}>
+        <ModalFooter flexShrink={0} borderTop="1px solid" borderColor="border" gap={3}>
           <Button variant="ghost" onClick={limparEFechar}>
             Cancelar
           </Button>
