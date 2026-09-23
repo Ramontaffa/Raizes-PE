@@ -145,3 +145,4 @@ npx tsc --noEmit
 - Leonardo Felipe Demétrio
 - Hilton Resende Montes Neto
 - Maria Clara Miranda Ferraz
+- Ramon Taffarel Guimarães
