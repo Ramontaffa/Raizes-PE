@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450">
+  <rect width="600" height="450" fill="#e8dbce"/>
+  <g opacity="0.4">
+    <rect x="0" y="0" width="600" height="450" fill="url(#stripes7)"/>
+  </g>
+  <defs>
+    <pattern id="stripes7" width="20" height="20" patternTransform="rotate(60)" patternUnits="userSpaceOnUse">
+      <rect width="10" height="20" fill="#cbb79f"/>
+    </pattern>
+  </defs>
+  <path d="M120 200 Q300 160 480 200 L470 260 Q300 300 130 260 Z" fill="#f4ece1" stroke="#a9835f" stroke-width="5"/>
+  <path d="M130 260 Q300 300 470 260 L460 310 Q300 345 140 310 Z" fill="#efe4d5" stroke="#a9835f" stroke-width="5"/>
+  <path d="M140 310 Q300 345 460 310 L452 350 Q300 380 148 350 Z" fill="#e9dcc9" stroke="#a9835f" stroke-width="5"/>
+</svg>

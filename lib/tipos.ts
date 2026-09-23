@@ -35,6 +35,9 @@ export interface Produto {
   preco: number;
   estoqueQtd: number;
   dataCadastro: string;
+  // Opcional: produtos antigos (ou cadastrados sem foto) continuam mostrando o
+  // padrão visual da técnica, em vez de quebrar a tela.
+  imagemUrl?: string;
 }
 
 export type StatusPedido = "pendente" | "pago" | "enviado" | "entregue";

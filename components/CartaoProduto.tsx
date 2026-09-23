@@ -1,7 +1,7 @@
 import { Box, Text, Badge, HStack, Link as ChakraLink } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { FiMapPin } from "react-icons/fi";
-import { ARTE_POR_TECNICA, PADRAO_RENDA } from "@/lib/arteProduto";
+import { estiloFundoProduto } from "@/lib/arteProduto";
 import type { ProdutoComArtesao } from "@/lib/tipos";
 
 export default function CartaoProduto({
@@ -11,8 +11,6 @@ export default function CartaoProduto({
   produto: ProdutoComArtesao;
   altura?: string;
 }) {
-  const ehRenda = produto.tecnica === "Renda e Bordado";
-
   return (
     <Box as="article" mb={7} sx={{ breakInside: "avoid" }}>
       <ChakraLink as={NextLink} href={`/produto/${produto.id}`} _hover={{ textDecoration: "none" }} display="block">
@@ -20,9 +18,7 @@ export default function CartaoProduto({
           h={altura}
           borderRadius="8px"
           mb={3}
-          bg={ehRenda ? "secondary" : undefined}
-          backgroundImage={ehRenda ? PADRAO_RENDA : ARTE_POR_TECNICA[produto.tecnica]}
-          backgroundSize={ehRenda ? "14px 14px" : "cover"}
+          {...estiloFundoProduto(produto)}
         />
         <Badge
           bg="accent"

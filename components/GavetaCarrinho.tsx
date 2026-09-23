@@ -21,13 +21,12 @@ import {
 } from "@chakra-ui/react";
 import { FiMinus, FiPlus, FiShoppingBag, FiTrash2 } from "react-icons/fi";
 import { useCarrinho } from "@/lib/contextoCarrinho";
-import { ARTE_POR_TECNICA, PADRAO_RENDA } from "@/lib/arteProduto";
+import { estiloFundoProduto } from "@/lib/arteProduto";
 import type { ItemCarrinhoComProduto } from "@/lib/tipos";
 
 function LinhaDoCarrinho({ item }: { item: ItemCarrinhoComProduto }) {
   const { atualizarQuantidade, removerItem } = useCarrinho();
   const { produto } = item;
-  const ehRenda = produto.tecnica === "Renda e Bordado";
   const noLimiteDoEstoque = item.quantidade >= produto.estoqueQtd;
 
   return (
@@ -38,9 +37,7 @@ function LinhaDoCarrinho({ item }: { item: ItemCarrinhoComProduto }) {
           w="64px"
           h="64px"
           borderRadius="8px"
-          bg={ehRenda ? "secondary" : undefined}
-          backgroundImage={ehRenda ? PADRAO_RENDA : ARTE_POR_TECNICA[produto.tecnica]}
-          backgroundSize={ehRenda ? "10px 10px" : "cover"}
+          {...estiloFundoProduto(produto)}
         />
 
         <Box flex={1} minW={0}>

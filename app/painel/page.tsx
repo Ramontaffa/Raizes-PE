@@ -1,33 +1,37 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Flex, Box, Heading, Text, Button, SimpleGrid, useToast } from "@chakra-ui/react";
+import { Flex, Box, Heading, Text, Button, SimpleGrid, useDisclosure, useToast } from "@chakra-ui/react";
 import BarraNavegacao from "@/components/BarraNavegacao";
 import CartaoEstatistica from "@/components/CartaoEstatistica";
 import GraficoVendas from "@/components/GraficoVendas";
 import LinhaProduto from "@/components/LinhaProduto";
 import LinhaPedido from "@/components/LinhaPedido";
-import { getProdutosDoArtesao, getEstatisticasPainel } from "@/lib/apiFalsa";
+import ModalAdicionarProduto, { DadosProdutoSubmetido } from "@/components/ModalAdicionarProduto";
+import { getEstatisticasPainel } from "@/lib/apiFalsa";
 import { usePedidos } from "@/lib/contextoPedidos";
-import type { ProdutoComArtesao, EstatisticasPainel } from "@/lib/tipos";
+import { useProdutos } from "@/lib/contextoProdutos";
+import type { EstatisticasPainel } from "@/lib/tipos";
 
 // Usuário de demonstração — Cooperativa de Tacaratu.
 // Quando houver autenticação de verdade, isso vem da sessão logada.
 const ID_USUARIO_DEMO = "u2";
 
 export default function Pagina() {
-  const [produtos, setProdutos] = useState<ProdutoComArtesao[]>([]);
   const [estatisticas, setEstatisticas] = useState<EstatisticasPainel | null>(null);
   const { pedidosDoArtesao, pedidosPendentesDoArtesao, vendasDoArtesao, marcarComoEnviado } =
     usePedidos();
+  const { produtosDoArtesao, criarProduto } = useProdutos();
+  const { isOpen: modalAberto, onOpen: abrirModal, onClose: fecharModal } = useDisclosure();
   const toast = useToast();
 
   const pedidos = pedidosDoArtesao(ID_USUARIO_DEMO);
   const pendentes = pedidosPendentesDoArtesao(ID_USUARIO_DEMO);
   const vendas = vendasDoArtesao(ID_USUARIO_DEMO);
+  // Produtos do mock + os cadastrados pelo próprio artesão nesta sessão.
+  const produtos = produtosDoArtesao(ID_USUARIO_DEMO);
 
   useEffect(() => {
-    getProdutosDoArtesao(ID_USUARIO_DEMO).then(setProdutos);
     getEstatisticasPainel(ID_USUARIO_DEMO).then(setEstatisticas);
   }, []);
 
@@ -36,6 +40,19 @@ export default function Pagina() {
     toast({
       title: "Pedido marcado como enviado",
       description: `O comprador foi avisado de que o pedido ${pedidoId} está a caminho.`,
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+      position: "top",
+    });
+  }
+
+  function salvarNovoProduto(dados: DadosProdutoSubmetido) {
+    const criado = criarProduto(ID_USUARIO_DEMO, dados);
+    if (!criado) return;
+    toast({
+      title: "Produto adicionado",
+      description: `"${criado.nome}" já está disponível na sua loja.`,
       status: "success",
       duration: 5000,
       isClosable: true,
@@ -54,7 +71,9 @@ export default function Pagina() {
               Aqui está o resumo da sua loja hoje.
             </Text>
           </Box>
-          <Button variant="solid">Adicionar Produto</Button>
+          <Button variant="solid" onClick={abrirModal}>
+            Adicionar Produto
+          </Button>
         </Flex>
 
         <SimpleGrid columns={{ base: 1, md: 3 }} spacing={5} mb={10}>
@@ -139,11 +158,17 @@ export default function Pagina() {
               Seus produtos (estoque)
             </Heading>
           </Box>
-          {produtos.map((p) => (
-            <LinhaProduto key={p.id} produto={p} />
-          ))}
+          {produtos.length === 0 ? (
+            <Text px={5} py={8} color="mutedFg" textAlign="center">
+              Nenhum produto cadastrado ainda.
+            </Text>
+          ) : (
+            produtos.map((p) => <LinhaProduto key={p.id} produto={p} />)
+          )}
         </Box>
       </Box>
+
+      <ModalAdicionarProduto aberto={modalAberto} aoFechar={fecharModal} aoSalvar={salvarNovoProduto} />
     </>
   );
 }

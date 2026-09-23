@@ -22,7 +22,7 @@ import {
   getProdutosRelacionados,
   getResumoAvaliacoes,
 } from "@/lib/apiFalsa";
-import { ARTE_POR_TECNICA, PADRAO_RENDA } from "@/lib/arteProduto";
+import { estiloFundoProduto } from "@/lib/arteProduto";
 import { useCarrinho } from "@/lib/contextoCarrinho";
 import type { ProdutoComArtesao, ResumoAvaliacoes } from "@/lib/tipos";
 
@@ -80,7 +80,6 @@ export default function Pagina() {
     );
   }
 
-  const ehRenda = produto.tecnica === "Renda e Bordado";
   const semEstoque = produto.estoqueQtd <= 0;
 
   return (
@@ -105,9 +104,7 @@ export default function Pagina() {
           <Box
             h={{ base: "320px", md: "480px" }}
             borderRadius="12px"
-            bg={ehRenda ? "secondary" : undefined}
-            backgroundImage={ehRenda ? PADRAO_RENDA : ARTE_POR_TECNICA[produto.tecnica]}
-            backgroundSize={ehRenda ? "18px 18px" : "cover"}
+            {...estiloFundoProduto(produto)}
           />
 
           <Box>

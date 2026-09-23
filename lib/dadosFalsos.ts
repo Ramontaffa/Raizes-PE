@@ -29,41 +29,52 @@ export const artesaos: Artesao[] = [
   { id: "a6", usuarioId: "u6", regiaoOrigem: "Alto do Moura, Caruaru", biografia: "Ateliê coletivo de cerâmica fosca contemporânea, unindo técnica tradicional a acabamentos modernos." },
 ];
 
+// Fotos de placeholder (SVGs em public/produtos/, um por produto) só pra tirar os cards
+// do gradiente genérico enquanto não existe upload real de foto vindo do artesão. São
+// arquivos locais — sem depender de nenhum serviço externo — e o artesão pode trocar
+// pela foto de verdade a qualquer momento pelo popup "Adicionar Produto"/edição.
 export const produtos: Produto[] = [
   {
     id: "p1", artesaoId: "a1", nome: "Vaso de Cerâmica Maragogi",
     descricao: "Vaso torneado à mão em argila local, com acabamento em duas cores e queima em forno a lenha. Cada peça é única, com pequenas variações de tom.",
     tecnica: "Cerâmica", categoria: "Decoração", preco: 185.0, estoqueQtd: 8, dataCadastro: "2025-06-01",
+    imagemUrl: "/produtos/p1.svg",
   },
   {
     id: "p2", artesaoId: "a2", nome: "Tapete Tear Manual",
     descricao: "Tapete tecido em tear manual de madeira, com algodão cru e tingimento natural à base de plantas da região.",
     tecnica: "Têxtil", categoria: "Casa", preco: 320.0, estoqueQtd: 8, dataCadastro: "2025-05-20",
+    imagemUrl: "/produtos/p2.svg",
   },
   {
     id: "p3", artesaoId: "a3", nome: "Escultura em Madeira - Leão",
     descricao: "Escultura entalhada em tronco de umburana reaproveitado, inspirada na fauna do sertão pernambucano.",
     tecnica: "Madeira", categoria: "Decoração", preco: 410.0, estoqueQtd: 3, dataCadastro: "2025-05-11",
+    imagemUrl: "/produtos/p3.svg",
   },
   {
     id: "p4", artesaoId: "a4", nome: "Renda de Bilro Flor do Agreste",
     descricao: "Renda de bilro trabalhada fio a fio, com padrão floral tradicional de Tracunhaém.",
     tecnica: "Renda e Bordado", categoria: "Vestuário", preco: 95.0, estoqueQtd: 15, dataCadastro: "2025-06-10",
+    imagemUrl: "/produtos/p4.svg",
   },
   {
     id: "p5", artesaoId: "a5", nome: "Cesto de Palha Trançada",
     descricao: "Cesto trançado à mão em palha de carnaúba, ideal para organização ou decoração.",
     tecnica: "Palha", categoria: "Casa", preco: 68.0, estoqueQtd: 20, dataCadastro: "2025-06-15",
+    imagemUrl: "/produtos/p5.svg",
   },
   {
     id: "p6", artesaoId: "a6", nome: "Jarro de Cerâmica Fosco",
     descricao: "Jarro de cerâmica com acabamento fosco contemporâneo, mantendo a técnica de modelagem manual tradicional.",
     tecnica: "Cerâmica", categoria: "Decoração", preco: 210.0, estoqueQtd: 6, dataCadastro: "2025-06-18",
+    imagemUrl: "/produtos/p6.svg",
   },
   {
     id: "p7", artesaoId: "a2", nome: "Manta de Algodão Cru",
     descricao: "Manta tecida em algodão cru não tingido, macia e respirável, feita sob encomenda pela cooperativa.",
     tecnica: "Têxtil", categoria: "Casa", preco: 275.0, estoqueQtd: 5, dataCadastro: "2025-06-20",
+    imagemUrl: "/produtos/p7.svg",
   },
 ];
 

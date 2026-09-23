@@ -19,7 +19,7 @@ import NextLink from "next/link";
 import { FiCompass, FiMapPin, FiShoppingCart, FiUser, FiHelpCircle } from "react-icons/fi";
 import { calcularRecomendacoes, ProdutoRecomendado } from "@/lib/motorRecomendacao";
 import { useCarrinho } from "@/lib/contextoCarrinho";
-import { ARTE_POR_TECNICA, PADRAO_RENDA } from "@/lib/arteProduto";
+import { estiloFundoProduto } from "@/lib/arteProduto";
 
 interface SecaoRecomendadosProps {
   compradorIdInicial?: string;
@@ -115,8 +115,6 @@ export default function SecaoRecomendados({
 
       <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} spacing={5}>
         {recomendados.map((prod) => {
-          const ehRenda = prod.tecnica === "Renda e Bordado";
-
           return (
             <Box
               key={prod.id}
@@ -135,13 +133,7 @@ export default function SecaoRecomendados({
                 href={`/produto/${prod.id}`}
                 _hover={{ textDecoration: "none" }}
               >
-                <Box
-                  h="160px"
-                  bg={ehRenda ? "secondary" : undefined}
-                  backgroundImage={ehRenda ? PADRAO_RENDA : ARTE_POR_TECNICA[prod.tecnica]}
-                  backgroundSize={ehRenda ? "14px 14px" : "cover"}
-                  position="relative"
-                >
+                <Box h="160px" position="relative" {...estiloFundoProduto(prod)}>
                   <Badge
                     position="absolute"
                     top={2}

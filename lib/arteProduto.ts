@@ -1,6 +1,6 @@
-// Padrões visuais usados no lugar das fotos enquanto o MVP não tem upload de imagem.
-// Ficavam duplicados em CartaoProduto e na página de produto; centralizados aqui porque
-// a gaveta do carrinho precisa da mesma miniatura.
+// Padrões visuais usados no lugar das fotos quando um produto não tem imagem cadastrada
+// (ou enquanto o MVP não tinha upload nenhum). Ficavam duplicados em CartaoProduto e na
+// página de produto; centralizados aqui porque a gaveta do carrinho precisa da mesma miniatura.
 
 export const ARTE_POR_TECNICA: Record<string, string> = {
   Cerâmica:
@@ -14,3 +14,25 @@ export const ARTE_POR_TECNICA: Record<string, string> = {
 };
 
 export const PADRAO_RENDA = "radial-gradient(circle, rgba(74,59,50,.28) 1.6px, transparent 1.7px)";
+
+// Props de background prontas pra jogar direto numa <Box> do Chakra. Usa a foto do produto
+// quando existe; cai pro padrão da técnica quando não existe (produto antigo ou sem foto).
+export function estiloFundoProduto(produto: {
+  tecnica: string;
+  imagemUrl?: string;
+}): { bg?: string; backgroundImage: string; backgroundSize: string; backgroundPosition?: string } {
+  if (produto.imagemUrl) {
+    return {
+      backgroundImage: `url(${produto.imagemUrl})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+    };
+  }
+
+  const ehRenda = produto.tecnica === "Renda e Bordado";
+  return {
+    bg: ehRenda ? "secondary" : undefined,
+    backgroundImage: ehRenda ? PADRAO_RENDA : ARTE_POR_TECNICA[produto.tecnica],
+    backgroundSize: ehRenda ? "14px 14px" : "cover",
+  };
+}
